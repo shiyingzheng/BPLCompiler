@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# a shellscript to run tests.
+# usage: ./runTests or ./runTests TokenTest
+if [ $# -lt 1 ] # if there are fewer than 1 argument
+then
+	classes=`ls bin/test/*.class` # get all class files in bin/test
+	for class in $classes
+		do
+            FILE=$(basename $class)
+			NAME=`echo "$FILE" | cut -d'.' -f1` # get the prefix before .class
+			java -cp "lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar:bin/test:bin/main" org.junit.runner.JUnitCore $NAME # run that test
+		done
+else
+	java -cp "lib/junit-4.12.jar:lib/hamcrest-core-1.3.jar:bin/test:bin/main" org.junit.runner.JUnitCore $1 # else just run the class specified by the first argument
+fi
