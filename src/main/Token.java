@@ -48,6 +48,6 @@ class Token {
     public String toString(){
         return "Token " + kind
                + ", string " + value
-               + ", line number" + line_num;
+               + ", line number " + line_num;
     }
 }

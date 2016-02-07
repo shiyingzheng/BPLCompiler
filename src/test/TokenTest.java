@@ -10,4 +10,10 @@ public class TokenTest {
         assertEquals(t.value, "meow");
         assertEquals(t.line_num, 12);
     }
+
+    @Test
+    public void testToString(){
+        Token t = new Token(5, "meow", 12);
+        assertEquals("Token 5, string meow, line number 12", t.toString());
+    }
 }
