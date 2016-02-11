@@ -1,16 +1,16 @@
 class Token {
     public static final int T_ID = 0;
     public static final int T_NUM = 1;
-    public static final int T_INT = 2;
-    public static final int T_VOID = 3;
-    public static final int T_KWSTRING = 4;
-    public static final int T_IF = 5;
-    public static final int T_ELSE = 6;
-    public static final int T_WHILE = 7;
-    public static final int T_RETURN = 8;
-    public static final int T_WRITE = 9;
-    public static final int T_WRITELN = 10;
-    public static final int T_READ = 11;
+    public static final int T_INT = 2; //keyword int
+    public static final int T_VOID = 3; //keyword void
+    public static final int T_KWSTRING = 4; //keyword string
+    public static final int T_IF = 5; //keyword if
+    public static final int T_ELSE = 6; //keyword else
+    public static final int T_WHILE = 7; //keyword while
+    public static final int T_RETURN = 8; //keyword return
+    public static final int T_WRITE = 9; //keyword write
+    public static final int T_WRITELN = 10; //keyword writeln
+    public static final int T_READ = 11; //keyword read
     public static final int T_SEMI = 12; // ;
     public static final int T_COMMA = 13; // ,
     public static final int T_LBRAC = 14; // [
@@ -23,8 +23,8 @@ class Token {
     public static final int T_LESSEQ = 21; // <=
     public static final int T_EQEQ = 22; // ==
     public static final int T_NE = 23; // !=
-    public static final int T_GREATEREQ = 24; // >=
-    public static final int T_GREATER = 25; // >
+    public static final int T_GREQ = 24; // >=
+    public static final int T_GR = 25; // >
     public static final int T_PLUS = 26; // +
     public static final int T_MINUS = 27; // -
     public static final int T_MULT = 28; // *

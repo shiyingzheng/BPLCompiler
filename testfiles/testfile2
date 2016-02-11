@@ -1,0 +1,15 @@
+public static void main( String[] args) {
+    String input FileName;
+    Scan myScanner;
+    input FileName = args[0];
+    myScanner = new Scan(input FileName);
+    while (myScanner.next Token.kind != Token.T_EOF) {
+        try {
+            myScanner.getNextToken();
+            System.out.println(myScanner.next Token);
+        }
+        catch (ScannerException e) {
+            System.out.println(e);
+        }
+    }
+}
