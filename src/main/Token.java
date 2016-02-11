@@ -32,7 +32,7 @@ class Token {
     public static final int T_PERCENT = 30; // %
     public static final int T_AMP = 31; // &
     public static final int T_EQ = 32; // =
-    public static final int T_STRING = 33;
+    public static final int T_STRING = 33; //actual string
 
     private int kind;
     private String value;
