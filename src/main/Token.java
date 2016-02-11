@@ -32,17 +32,28 @@ class Token {
     public static final int T_PERCENT = 30; // %
     public static final int T_AMP = 31; // &
     public static final int T_EQ = 32; // =
-    public static final int T_EOF = 33;
-    public static final int T_STRING = 34;
+    public static final int T_STRING = 33;
 
-    public int kind;
-    public String value;
-    public int line_num;
+    private int kind;
+    private String value;
+    private int line_num;
 
     public Token(int kind, String value, int line_num){
         this.kind = kind;
         this.value = value;
         this.line_num = line_num;
+    }
+
+    public int getKind(){
+        return kind;
+    }
+
+    public String getValue(){
+        return value;
+    }
+
+    public int getLineNumber(){
+        return line_num;
     }
 
     public String toString(){
