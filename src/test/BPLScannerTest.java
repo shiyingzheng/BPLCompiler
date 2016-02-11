@@ -8,7 +8,7 @@ public class BPLScannerTest {
         BPLScanner scanner = new BPLScanner("testfiles/testfile");
         assertTrue(scanner.hasNextToken());
         Token t1 = scanner.getNextToken();
-        Token t2 = new Token(Token.T_INT, "int", 2);
+        Token t2 = new Token(Token.T_INT, "int", 3);
         assertEquals(t1.getKind(), t2.getKind());
         assertEquals(t1.getValue(), t2.getValue());
         assertEquals(t1.getLineNumber(), t2.getLineNumber());
