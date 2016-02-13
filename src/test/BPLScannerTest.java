@@ -18,7 +18,8 @@ public class BPLScannerTest {
     public void testGetNextIntToken() throws BPLScannerException {
         BPLScanner scanner = new BPLScanner("testfiles/testfile_num");
         assertTrue(scanner.hasNextToken());
-        int token_num = 0;
+        assertEquals("14342432", scanner.getNextToken().getValue());
+        int token_num = 1;
         while(scanner.hasNextToken()){
             token_num++;
             Token t = scanner.getNextToken();
@@ -31,7 +32,8 @@ public class BPLScannerTest {
     public void testGetNextStringToken() throws BPLScannerException {
         BPLScanner scanner = new BPLScanner("testfiles/testfile_string");
         assertTrue(scanner.hasNextToken());
-        int token_num = 0;
+        assertEquals("meow", scanner.getNextToken().getValue());
+        int token_num = 1;
         while(scanner.hasNextToken()){
             token_num++;
             Token t = scanner.getNextToken();
@@ -66,6 +68,19 @@ public class BPLScannerTest {
             }
         }
         assertEquals(10, token_num);
+    }
+
+    @Test
+    public void testGetNextIDToken() throws BPLScannerException {
+        BPLScanner scanner = new BPLScanner("testfiles/testfile_id");
+        assertTrue(scanner.hasNextToken());
+        int token_num = 0;
+        while(scanner.hasNextToken()){
+            Token t = scanner.getNextToken();
+            assertEquals(t.getType(), Token.T_ID);
+            token_num++;
+        }
+        assertEquals(3, token_num);
     }
 
     @Test

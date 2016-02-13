@@ -22,7 +22,7 @@ class BPLScanner {
         this.curLineNum = 0;
     }
 
-    public boolean hasNextToken() throws BPLScannerException{
+    public boolean hasNextToken() throws BPLScannerException {
         if (this.curLine == null || this.lineEnded()){
             if (this.hasNextLine()){
                 this.goNextLine();
@@ -39,17 +39,7 @@ class BPLScanner {
                 else if (this.currentCharEquals('/')) {
                     this.goNextChar();
                     if (this.currentCharEquals('*')) {
-                        String temp = this.curLine.substring(this.curIndex);
-                        while (temp.indexOf("*/") == -1){
-                            if (this.hasNextLine()){
-                                this.goNextLine();
-                                temp = this.curLine;
-                            }
-                            else {
-                                throw new BPLScannerException(this.curLineNum, "comment not closed with */");
-                            }
-                        }
-                        this.curIndex = this.curLine.indexOf("*/") + 2;
+                        this.skipComment();
                     }
                     else {
                         this.goPrevChar();
@@ -75,185 +65,59 @@ class BPLScanner {
                 "no more token. Please use the hasNextToken() function to check first.");
         }
 
-        String curToken = "";
+        String token = "";
         int type = -1;
 
         char c = this.currentChar();
-        this.goNextChar();
 
         if (Character.isDigit(c)){
-            curToken += c;
             type = Token.T_NUM;
-            while (!this.lineEnded()){
-                c = this.currentChar();
-                this.goNextChar();
-                if (Character.isDigit(c)){
-                    curToken += c;
-                }
-                else {
-                    this.goPrevChar();
-                    break;
-                }
-            }
+            token = this.getNumTokenString();
         }
         else if (c == '"'){
             type = Token.T_STRING;
-            boolean valid = false;
-            while (!this.lineEnded()){
-                c = this.currentChar();
-                this.goNextChar();
-                if (c == '"'){
-                    valid = true;
-                    break;
-                }
-                else {
-                    curToken += c;
-                }
-            }
-            if (!valid) {
-                throw new BPLScannerException(this.curLineNum,
-                    "closing quote for string not found on the same line");
-            }
+            token = this.getStringTokenString();
         }
         else if (Character.isLetter(c)) {
-            curToken += c;
-            while (!lineEnded()){
-                c = this.currentChar();
-                this.goNextChar();
-                if (Character.isLetter(c) || Character.isDigit(c)
-                        || c == '_'){
-                    curToken += c;
-                }
-                else {
-                    this.goPrevChar();
-                    break;
-                }
-            }
-            if (curToken.equals("int")){
-                type = Token.T_INT;
-            }
-            else if (curToken.equals("void")){
-                type = Token.T_VOID;
-            }
-            else if (curToken.equals("string")){
-                type = Token.T_KWSTRING;
-            }
-            else if (curToken.equals("if")){
-                type = Token.T_IF;
-            }
-            else if (curToken.equals("else")){
-                type = Token.T_ELSE;
-            }
-            else if (curToken.equals("while")){
-                type = Token.T_WHILE;
-            }
-            else if (curToken.equals("return")){
-                type = Token.T_RETURN;
-            }
-            else if (curToken.equals("write")){
-                type = Token.T_WRITE;
-            }
-            else if (curToken.equals("writeln")){
-                type = Token.T_WRITELN;
-            }
-            else if (curToken.equals("read")){
-                type = Token.T_READ;
-            }
-            else {
-                type = Token.T_ID;
-            }
+            token = this.getKeywordOrIDString();
+            type = this.getKeywordOrIDType(token);
         }
         else {
-            curToken += c;
-            if (curToken.equals(";")){
-                type = Token.T_SEMI;
-            }
-            else if (curToken.equals(",")){
-                type = Token.T_COMMA;
-            }
-            else if (curToken.equals("[")){
-                type = Token.T_LBRAC;
-            }
-            else if (curToken.equals("]")){
-                type = Token.T_RBRAC;
-            }
-            else if (curToken.equals("{")){
-                type = Token.T_LCURL;
-            }
-            else if (curToken.equals("}")){
-                type = Token.T_RCURL;
-            }
-            else if (curToken.equals("(")){
-                type = Token.T_LPAREN;
-            }
-            else if (curToken.equals(")")){
-                type = Token.T_RPAREN;
-            }
-            else if (curToken.equals("<")){
+            token += c;
+            this.goNextChar();
+            if (token.equals("<")){
                 if (this.currentCharEquals('=')) {
-                    type = Token.T_LESSEQ;
-                    curToken += "=";
+                    token += "=";
                     this.goNextChar();
                 }
-                else{
-                    type = Token.T_LESS;
-                }
             }
-            else if (curToken.equals("=")){
+            else if (token.equals("=")){
                 if (this.currentCharEquals('=')) {
-                    type = Token.T_EQEQ;
-                    curToken += "=";
+                    token += "=";
                     this.goNextChar();
                 }
-                else{
-                    type = Token.T_EQ;
-                }
             }
-            else if (curToken.equals(">")){
+            else if (token.equals(">")){
                 if (this.currentCharEquals('=')) {
-                    type = Token.T_GREQ;
-                    curToken += "=";
+                    token += "=";
                     this.goNextChar();
                 }
-                else{
-                    type = Token.T_GR;
-                }
             }
-            else if (curToken.equals("!")){
+            else if (token.equals("!")){
                 if (this.currentCharEquals('=')) {
-                    type = Token.T_NE;
-                    curToken += "=";
+                    token += "=";
                     this.goNextChar();
                 }
                 else{
                     throw new BPLScannerException(this.curLineNum, "illegal token !");
                 }
             }
-            else if (curToken.equals("+")){
-                type = Token.T_PLUS;
-            }
-            else if (curToken.equals("-")){
-                type = Token.T_MINUS;
-            }
-            else if (curToken.equals("*")){
-                type = Token.T_MULT;
-            }
-            else if (curToken.equals("/")){
-                type = Token.T_DIV;
-            }
-            else if (curToken.equals("%")){
-                type = Token.T_PERCENT;
-            }
-            else if (curToken.equals("&")){
-                type = Token.T_AMP;
-            }
-            else {
-                throw new BPLScannerException(this.curLineNum, "illegal character ascii " + (int)c);
-            }
+            type = getSymbolType(token);
         }
 
-        return new Token(type, curToken, this.curLineNum);
+        return new Token(type, token, this.curLineNum);
     }
+
 
     /** Private methods */
 
@@ -261,12 +125,17 @@ class BPLScanner {
         return this.scanner.hasNextLine();
     }
 
+    // goes to next character on the same line
+    // if out of bounds, will be handled by hasNextToken()
     private void goNextChar(){
         this.curIndex++;
     }
 
+    // goes to previous character on the same line, if exists
     private void goPrevChar(){
-        this.curIndex--;
+        if (this.curIndex > 0){
+            this.curIndex--;
+        }
     }
 
     private void goNextLine(){
@@ -288,7 +157,184 @@ class BPLScanner {
         return this.curLine.charAt(this.curIndex);
     }
 
+    private void skipComment() throws BPLScannerException {
+        String temp = this.curLine.substring(this.curIndex);
+        while (temp.indexOf("*/") == -1){
+            if (this.hasNextLine()){
+                this.goNextLine();
+                temp = this.curLine;
+            }
+            else {
+                throw new BPLScannerException(this.curLineNum, "comment not closed with */");
+            }
+        }
+        this.curIndex = this.curLine.indexOf("*/") + 2;
+    }
+
+    private String getNumTokenString() {
+        String token = "";
+        while (!this.lineEnded()){
+            char c = this.currentChar();
+            this.goNextChar();
+            if (Character.isDigit(c)){
+                token += c;
+            }
+            else {
+                this.goPrevChar();
+                break;
+            }
+        }
+        return token;
+    }
+
+    private String getStringTokenString() throws BPLScannerException {
+        String token = "";
+        boolean valid = false;
+        this.goNextChar();
+        while (!this.lineEnded()){
+            char c = this.currentChar();
+            this.goNextChar();
+            if (c == '"'){
+                valid = true;
+                break;
+            }
+            else {
+                token += c;
+            }
+        }
+        if (!valid) {
+            throw new BPLScannerException(this.curLineNum,
+                "closing quote for string not found on the same line");
+        }
+        return token;
+    }
+
+    private String getKeywordOrIDString() {
+        String token = "";
+        token += this.currentChar();
+        this.goNextChar();
+        while (!this.lineEnded()){
+            char c = this.currentChar();
+            this.goNextChar();
+            if (Character.isLetter(c) || Character.isDigit(c)
+                    || c == '_'){
+                token += c;
+            }
+            else {
+                this.goPrevChar();
+                break;
+            }
+        }
+        return token;
+    }
+
+    private int getKeywordOrIDType(String token) {
+        if (token.equals("int")){
+            return Token.T_INT;
+        }
+        else if (token.equals("void")){
+            return Token.T_VOID;
+        }
+        else if (token.equals("string")){
+            return Token.T_KWSTRING;
+        }
+        else if (token.equals("if")){
+            return Token.T_IF;
+        }
+        else if (token.equals("else")){
+            return Token.T_ELSE;
+        }
+        else if (token.equals("while")){
+            return Token.T_WHILE;
+        }
+        else if (token.equals("return")){
+            return Token.T_RETURN;
+        }
+        else if (token.equals("write")){
+            return Token.T_WRITE;
+        }
+        else if (token.equals("writeln")){
+            return Token.T_WRITELN;
+        }
+        else if (token.equals("read")){
+            return Token.T_READ;
+        }
+
+        return Token.T_ID;
+    }
+
+    private int getSymbolType(String token) throws BPLScannerException{
+        if (token.equals(";")){
+            return Token.T_SEMI;
+        }
+        else if (token.equals(",")){
+            return Token.T_COMMA;
+        }
+        else if (token.equals("[")){
+            return Token.T_LBRAC;
+        }
+        else if (token.equals("]")){
+            return Token.T_RBRAC;
+        }
+        else if (token.equals("{")){
+            return Token.T_LCURL;
+        }
+        else if (token.equals("}")){
+            return Token.T_RCURL;
+        }
+        else if (token.equals("(")){
+            return Token.T_LPAREN;
+        }
+        else if (token.equals(")")){
+            return Token.T_RPAREN;
+        }
+        else if (token.equals("<=")){
+            return Token.T_LESSEQ;
+        }
+        else if (token.equals("<")){
+            return Token.T_LESS;
+        }
+        else if (token.equals("==")){
+            return Token.T_EQEQ;
+        }
+        else if (token.equals("=")) {
+            return Token.T_EQ;
+        }
+        else if (token.equals(">=")){
+            return Token.T_GREQ;
+        }
+        else if (token.equals(">")){
+            return Token.T_GR;
+        }
+        else if (token.equals("!=")){
+            return Token.T_NE;
+        }
+        else if (token.equals("+")){
+            return Token.T_PLUS;
+        }
+        else if (token.equals("-")){
+            return Token.T_MINUS;
+        }
+        else if (token.equals("*")){
+            return Token.T_MULT;
+        }
+        else if (token.equals("/")){
+            return Token.T_DIV;
+        }
+        else if (token.equals("%")){
+            return Token.T_PERCENT;
+        }
+        else if (token.equals("&")){
+            return Token.T_AMP;
+        }
+
+        this.goPrevChar();
+        throw new BPLScannerException(this.curLineNum, "illegal character ascii "
+            + (int)this.currentChar());
+    }
+
     /** End of private methods */
+
 
     public static void main(String args[]) throws BPLScannerException {
         String fileName = args[0];
