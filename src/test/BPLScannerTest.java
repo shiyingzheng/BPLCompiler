@@ -78,7 +78,7 @@ public class BPLScannerTest {
             assertEquals(Token.T_ID, t.getKind());
             token_num++;
         }
-        assertEquals(1, token_num);
+        assertEquals(2, token_num);
     }
 
     @Test(expected=BPLScannerException.class)
