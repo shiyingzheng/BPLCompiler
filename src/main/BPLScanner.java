@@ -33,7 +33,7 @@ class BPLScanner {
         }
         while (true){
             if (!lineEnded()){
-                if (Character.isWhitespace(curLine.charAt(this.curIndex))) {
+                if (Character.isWhitespace(this.currentChar())) {
                     this.goNextChar();
                 }
                 else if (this.currentCharEquals('/')) {
@@ -43,7 +43,7 @@ class BPLScanner {
                         while (temp.indexOf("*/") == -1){
                             if (this.hasNextLine()){
                                 this.goNextLine();
-                                temp = curLine;
+                                temp = this.curLine;
                             }
                             else {
                                 throw new BPLScannerException(this.curLineNum, "comment not closed with */");
@@ -193,7 +193,7 @@ class BPLScanner {
                 if (this.currentCharEquals('=')) {
                     kind = Token.T_LESSEQ;
                     curToken += "=";
-                    curIndex += 1;
+                    this.goNextChar();
                 }
                 else{
                     kind = Token.T_LESS;
@@ -203,7 +203,7 @@ class BPLScanner {
                 if (this.currentCharEquals('=')) {
                     kind = Token.T_EQEQ;
                     curToken += "=";
-                    curIndex += 1;
+                    this.goNextChar();
                 }
                 else{
                     kind = Token.T_EQ;
@@ -213,7 +213,7 @@ class BPLScanner {
                 if (this.currentCharEquals('=')) {
                     kind = Token.T_GREQ;
                     curToken += "=";
-                    curIndex += 1;
+                    this.goNextChar();
                 }
                 else{
                     kind = Token.T_GR;
@@ -223,7 +223,7 @@ class BPLScanner {
                 if (this.currentCharEquals('=')) {
                     kind = Token.T_NE;
                     curToken += "=";
-                    curIndex += 1;
+                    this.goNextChar();
                 }
                 else{
                     throw new BPLScannerException(this.curLineNum, "illegal token !");
@@ -276,7 +276,7 @@ class BPLScanner {
     }
 
     private boolean lineEnded(){
-        return this.curIndex >= curLine.length();
+        return this.curIndex >= this.curLine.length();
     }
 
     private boolean currentCharEquals(char c){
