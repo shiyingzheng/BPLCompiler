@@ -83,35 +83,7 @@ class BPLScanner {
             type = this.getKeywordOrIDType(token);
         }
         else {
-            token += c;
-            this.goNextChar();
-            if (token.equals("<")){
-                if (this.currentCharEquals('=')) {
-                    token += "=";
-                    this.goNextChar();
-                }
-            }
-            else if (token.equals("=")){
-                if (this.currentCharEquals('=')) {
-                    token += "=";
-                    this.goNextChar();
-                }
-            }
-            else if (token.equals(">")){
-                if (this.currentCharEquals('=')) {
-                    token += "=";
-                    this.goNextChar();
-                }
-            }
-            else if (token.equals("!")){
-                if (this.currentCharEquals('=')) {
-                    token += "=";
-                    this.goNextChar();
-                }
-                else{
-                    throw new BPLScannerException(this.curLineNum, "illegal token !");
-                }
-            }
+            token = this.getSymbolString();
             type = getSymbolType(token);
         }
 
@@ -261,6 +233,40 @@ class BPLScanner {
         }
 
         return Token.T_ID;
+    }
+
+    private String getSymbolString() throws BPLScannerException {
+        String token = "";
+        token += this.currentChar();
+        this.goNextChar();
+        if (token.equals("<")){
+            if (this.currentCharEquals('=')) {
+                token += "=";
+                this.goNextChar();
+            }
+        }
+        else if (token.equals("=")){
+            if (this.currentCharEquals('=')) {
+                token += "=";
+                this.goNextChar();
+            }
+        }
+        else if (token.equals(">")){
+            if (this.currentCharEquals('=')) {
+                token += "=";
+                this.goNextChar();
+            }
+        }
+        else if (token.equals("!")){
+            if (this.currentCharEquals('=')) {
+                token += "=";
+                this.goNextChar();
+            }
+            else{
+                throw new BPLScannerException(this.curLineNum, "illegal token !");
+            }
+        }
+        return token;
     }
 
     private int getSymbolType(String token) throws BPLScannerException{
