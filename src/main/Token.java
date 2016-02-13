@@ -34,18 +34,18 @@ class Token {
     public static final int T_EQ = 32; // =
     public static final int T_STRING = 33; //actual string
 
-    private int kind;
+    private int type;
     private String value;
     private int line_num;
 
-    public Token(int kind, String value, int line_num){
-        this.kind = kind;
+    public Token(int type, String value, int line_num){
+        this.type = type;
         this.value = value;
         this.line_num = line_num;
     }
 
-    public int getKind(){
-        return kind;
+    public int getType(){
+        return type;
     }
 
     public String getValue(){
@@ -56,9 +56,13 @@ class Token {
         return line_num;
     }
 
+    public boolean isType(int type){
+        return this.type == type;
+    }
+
     public String toString(){
-        return "Token " + kind
-               + ", string " + value
-               + ", line number " + line_num;
+        return "Token " + this.type
+               + ", string " + this.value
+               + ", line number " + this.line_num;
     }
 }

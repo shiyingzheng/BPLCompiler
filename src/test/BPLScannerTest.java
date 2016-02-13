@@ -9,7 +9,7 @@ public class BPLScannerTest {
         assertTrue(scanner.hasNextToken());
         Token t1 = scanner.getNextToken();
         Token t2 = new Token(Token.T_INT, "int", 3);
-        assertEquals(t1.getKind(), t2.getKind());
+        assertEquals(t1.getType(), t2.getType());
         assertEquals(t1.getValue(), t2.getValue());
         assertEquals(t1.getLineNumber(), t2.getLineNumber());
     }
@@ -22,7 +22,7 @@ public class BPLScannerTest {
         while(scanner.hasNextToken()){
             token_num++;
             Token t = scanner.getNextToken();
-            assertEquals(t.getKind(), Token.T_NUM);
+            assertEquals(t.getType(), Token.T_NUM);
         }
         assertEquals(4, token_num);
     }
@@ -35,7 +35,7 @@ public class BPLScannerTest {
         while(scanner.hasNextToken()){
             token_num++;
             Token t = scanner.getNextToken();
-            assertEquals(t.getKind(), Token.T_STRING);
+            assertEquals(t.getType(), Token.T_STRING);
         }
         assertEquals(5, token_num);
     }
@@ -47,7 +47,7 @@ public class BPLScannerTest {
         int token_num = 0;
         while(scanner.hasNextToken()){
             Token t = scanner.getNextToken();
-            if (t.getKind() >= 12 && t.getKind() <= 32){
+            if (t.getType() >= 12 && t.getType() <= 32){
                 token_num++;
             }
         }
@@ -61,7 +61,7 @@ public class BPLScannerTest {
         int token_num = 0;
         while(scanner.hasNextToken()){
             Token t = scanner.getNextToken();
-            if (t.getKind() >= 2 && t.getKind() <= 11){
+            if (t.getType() >= 2 && t.getType() <= 11){
                 token_num++;
             }
         }
@@ -75,7 +75,7 @@ public class BPLScannerTest {
         int token_num = 0;
         while(scanner.hasNextToken()){
             Token t = scanner.getNextToken();
-            assertEquals(Token.T_ID, t.getKind());
+            assertEquals(Token.T_ID, t.getType());
             token_num++;
         }
         assertEquals(2, token_num);

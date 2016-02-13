@@ -76,14 +76,14 @@ class BPLScanner {
         }
 
         String curToken = "";
-        int kind = -1;
+        int type = -1;
 
         char c = this.currentChar();
         this.goNextChar();
 
         if (Character.isDigit(c)){
             curToken += c;
-            kind = Token.T_NUM;
+            type = Token.T_NUM;
             while (!this.lineEnded()){
                 c = this.currentChar();
                 this.goNextChar();
@@ -97,7 +97,7 @@ class BPLScanner {
             }
         }
         else if (c == '"'){
-            kind = Token.T_STRING;
+            type = Token.T_STRING;
             boolean valid = false;
             while (!this.lineEnded()){
                 c = this.currentChar();
@@ -130,98 +130,98 @@ class BPLScanner {
                 }
             }
             if (curToken.equals("int")){
-                kind = Token.T_INT;
+                type = Token.T_INT;
             }
             else if (curToken.equals("void")){
-                kind = Token.T_VOID;
+                type = Token.T_VOID;
             }
             else if (curToken.equals("string")){
-                kind = Token.T_KWSTRING;
+                type = Token.T_KWSTRING;
             }
             else if (curToken.equals("if")){
-                kind = Token.T_IF;
+                type = Token.T_IF;
             }
             else if (curToken.equals("else")){
-                kind = Token.T_ELSE;
+                type = Token.T_ELSE;
             }
             else if (curToken.equals("while")){
-                kind = Token.T_WHILE;
+                type = Token.T_WHILE;
             }
             else if (curToken.equals("return")){
-                kind = Token.T_RETURN;
+                type = Token.T_RETURN;
             }
             else if (curToken.equals("write")){
-                kind = Token.T_WRITE;
+                type = Token.T_WRITE;
             }
             else if (curToken.equals("writeln")){
-                kind = Token.T_WRITELN;
+                type = Token.T_WRITELN;
             }
             else if (curToken.equals("read")){
-                kind = Token.T_READ;
+                type = Token.T_READ;
             }
             else {
-                kind = Token.T_ID;
+                type = Token.T_ID;
             }
         }
         else {
             curToken += c;
             if (curToken.equals(";")){
-                kind = Token.T_SEMI;
+                type = Token.T_SEMI;
             }
             else if (curToken.equals(",")){
-                kind = Token.T_COMMA;
+                type = Token.T_COMMA;
             }
             else if (curToken.equals("[")){
-                kind = Token.T_LBRAC;
+                type = Token.T_LBRAC;
             }
             else if (curToken.equals("]")){
-                kind = Token.T_RBRAC;
+                type = Token.T_RBRAC;
             }
             else if (curToken.equals("{")){
-                kind = Token.T_LCURL;
+                type = Token.T_LCURL;
             }
             else if (curToken.equals("}")){
-                kind = Token.T_RCURL;
+                type = Token.T_RCURL;
             }
             else if (curToken.equals("(")){
-                kind = Token.T_LPAREN;
+                type = Token.T_LPAREN;
             }
             else if (curToken.equals(")")){
-                kind = Token.T_RPAREN;
+                type = Token.T_RPAREN;
             }
             else if (curToken.equals("<")){
                 if (this.currentCharEquals('=')) {
-                    kind = Token.T_LESSEQ;
+                    type = Token.T_LESSEQ;
                     curToken += "=";
                     this.goNextChar();
                 }
                 else{
-                    kind = Token.T_LESS;
+                    type = Token.T_LESS;
                 }
             }
             else if (curToken.equals("=")){
                 if (this.currentCharEquals('=')) {
-                    kind = Token.T_EQEQ;
+                    type = Token.T_EQEQ;
                     curToken += "=";
                     this.goNextChar();
                 }
                 else{
-                    kind = Token.T_EQ;
+                    type = Token.T_EQ;
                 }
             }
             else if (curToken.equals(">")){
                 if (this.currentCharEquals('=')) {
-                    kind = Token.T_GREQ;
+                    type = Token.T_GREQ;
                     curToken += "=";
                     this.goNextChar();
                 }
                 else{
-                    kind = Token.T_GR;
+                    type = Token.T_GR;
                 }
             }
             else if (curToken.equals("!")){
                 if (this.currentCharEquals('=')) {
-                    kind = Token.T_NE;
+                    type = Token.T_NE;
                     curToken += "=";
                     this.goNextChar();
                 }
@@ -230,29 +230,29 @@ class BPLScanner {
                 }
             }
             else if (curToken.equals("+")){
-                kind = Token.T_PLUS;
+                type = Token.T_PLUS;
             }
             else if (curToken.equals("-")){
-                kind = Token.T_MINUS;
+                type = Token.T_MINUS;
             }
             else if (curToken.equals("*")){
-                kind = Token.T_MULT;
+                type = Token.T_MULT;
             }
             else if (curToken.equals("/")){
-                kind = Token.T_DIV;
+                type = Token.T_DIV;
             }
             else if (curToken.equals("%")){
-                kind = Token.T_PERCENT;
+                type = Token.T_PERCENT;
             }
             else if (curToken.equals("&")){
-                kind = Token.T_AMP;
+                type = Token.T_AMP;
             }
             else {
                 throw new BPLScannerException(this.curLineNum, "illegal character ascii " + (int)c);
             }
         }
 
-        return new Token(kind, curToken, this.curLineNum);
+        return new Token(type, curToken, this.curLineNum);
     }
 
     /** Private methods */
