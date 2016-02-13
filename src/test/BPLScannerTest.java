@@ -104,4 +104,19 @@ public class BPLScannerTest {
             Token t = scanner.getNextToken();
         }
     }
+
+    @Test(expected=BPLScannerException.class)
+    public void testGetNextTokenSymbolException() throws BPLScannerException {
+        BPLScanner scanner = new BPLScanner("testfiles/testfile_exclam");
+        assertTrue(scanner.hasNextToken());
+        while(scanner.hasNextToken()){
+            Token t = scanner.getNextToken();
+        }
+    }
+
+    @Test(expected=BPLScannerException.class)
+    public void testGetNextTokenNoNextTokenException() throws BPLScannerException {
+        BPLScanner scanner = new BPLScanner("testfiles/testfile_empty");
+        Token t = scanner.getNextToken();
+    }
 }

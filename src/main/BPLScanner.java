@@ -50,7 +50,7 @@ class BPLScanner {
                                 this.curLineNum++;
                             }
                             else {
-                                throw new BPLScannerException("Comment not closed");
+                                throw new BPLScannerException(this.curLineNum, "comment not closed with */");
                             }
                         }
                         this.curIndex = this.curLine.indexOf("*/") + 2;
@@ -76,7 +76,8 @@ class BPLScanner {
 
     public Token getNextToken() throws BPLScannerException {
         if (!hasNextToken()){
-            throw new BPLScannerException("No more token");
+            throw new BPLScannerException(this.curLineNum,
+                "no more token. Please use the hasNextToken() function to check first.");
         }
 
         boolean tokenizing = true;
@@ -120,8 +121,8 @@ class BPLScanner {
                     }
                 }
                 if (!valid) {
-                    throw new BPLScannerException("Closing ( for string not found on line"
-                                                   + this.curLineNum);
+                    throw new BPLScannerException(this.curLineNum,
+                        "closing quote for string not found on the same line");
                 }
             }
             else if (Character.isLetter(c)) {
@@ -241,7 +242,7 @@ class BPLScanner {
                         curIndex += 1;
                     }
                     else{
-                        throw new BPLScannerException("Illegal character on line " + this.curLineNum);
+                        throw new BPLScannerException(this.curLineNum, "illegal token !");
                     }
                 }
                 else if (curToken.equals("+")){
@@ -263,8 +264,7 @@ class BPLScanner {
                     kind = Token.T_AMP;
                 }
                 else {
-                    throw new BPLScannerException("Illegal character ascii "
-                        + (int)c + " on line " + this.curLineNum);
+                    throw new BPLScannerException(this.curLineNum, "illegal character ascii " + (int)c);
                 }
             }
         }
