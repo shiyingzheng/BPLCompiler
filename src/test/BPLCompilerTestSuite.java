@@ -5,6 +5,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
   TokenTest.class,
   BPLScannerTest.class,
+  BPLParseTreeNodeTest.class,
 })
 
 public class BPLCompilerTestSuite {
