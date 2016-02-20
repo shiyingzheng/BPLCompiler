@@ -27,11 +27,14 @@ public class BPLParseTreeNode {
         this.children[i] = child;
     }
 
-    public String toString(){
-        String s = "Line " + this.getLineNumber() + ": " + nodeType + "\n";
-        for (int i = 0; i < children.length; i++){
-            s += "\t" + children[i].toString();
+    public int numChildren(){
+        if (this.children == null){
+            return 0;
         }
-        return s;
+        return this.children.length;
+    }
+
+    public String toString(){
+        return "Line " + this.getLineNumber() + ": " + nodeType + "\n";
     }
 }

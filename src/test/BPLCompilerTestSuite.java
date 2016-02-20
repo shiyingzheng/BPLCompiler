@@ -6,6 +6,7 @@ import org.junit.runners.Suite;
   TokenTest.class,
   BPLScannerTest.class,
   BPLParseTreeNodeTest.class,
+  BPLParserTest.class,
 })
 
 public class BPLCompilerTestSuite {
