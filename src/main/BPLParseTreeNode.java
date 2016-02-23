@@ -35,6 +35,6 @@ public class BPLParseTreeNode {
     }
 
     public String toString(){
-        return "Line " + this.getLineNumber() + ": " + nodeType + "\n";
+        return "Line " + this.getLineNumber() + ": " + nodeType;
     }
 }

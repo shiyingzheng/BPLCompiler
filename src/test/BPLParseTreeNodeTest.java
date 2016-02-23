@@ -7,6 +7,6 @@ public class BPLParseTreeNodeTest {
     public void testBPLParseTreeNode() {
         BPLParseTreeNode node = new BPLParseTreeNode("<empty>", 0, 0);
         assertNotNull(node);
-        assertEquals(node.toString(), "Line 0: <empty>\n");
+        assertEquals(node.toString(), "Line 0: <empty>");
     }
 }
