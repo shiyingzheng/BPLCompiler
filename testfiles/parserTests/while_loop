@@ -1,0 +1,10 @@
+int y (void) {
+    int x;
+    x;
+    y;
+    while (a) {
+        b;
+    }
+}
+
+string meow;

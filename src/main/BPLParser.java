@@ -28,11 +28,9 @@ public class BPLParser {
         for (int i = 0; i < depth; i++){
             s += "  ";
         }
-        if (tree.getNodeType() != "<empty>"){
-            s += tree.toString() + "\n";
-            for (int i = 0; i < tree.numChildren(); i++){
-                s += this.toStringHelper(tree.getChild(i), depth + 1);
-            }
+        s += tree.toString() + "\n";
+        for (int i = 0; i < tree.numChildren(); i++){
+            s += this.toStringHelper(tree.getChild(i), depth + 1);
         }
         return s;
     }
@@ -272,6 +270,9 @@ public class BPLParser {
         else if (t.isType(Token.T_IF)){
             node = this.ifStatement();
         }
+        else if (t.isType(Token.T_WHILE)){
+            node = this.whileStatement();
+        }
         else {
             node = this.expressionStatement();
         }
@@ -388,6 +389,38 @@ public class BPLParser {
 
         return ifStmt;
     }
+
+    private BPLParseTreeNode whileStatement() throws BPLParserException {
+        Token t = this.getNextToken();
+        if (!t.isType(Token.T_WHILE)){
+            throw new BPLParserException(t.getLineNumber(),
+                "Unsupported grammar rule.");
+        }
+        int lineNum = t.getLineNumber();
+
+        t = this.getNextToken();
+        if (!t.isType(Token.T_LPAREN)){
+            throw new BPLParserException(t.getLineNumber(),
+                "Unsupported grammar rule.");
+        }
+
+        BPLParseTreeNode exp = this.expression();
+        t = this.getNextToken();
+        if (!t.isType(Token.T_RPAREN)){
+            throw new BPLParserException(t.getLineNumber(),
+                "Unsupported grammar rule.");
+        }
+
+        BPLParseTreeNode stmt = this.statement();
+
+        BPLParseTreeNode whileStmt = new BPLParseTreeNode("IF_STATEMENT",
+                2, lineNum);
+        whileStmt.setChild(0, exp);
+        whileStmt.setChild(1, stmt);
+
+        return whileStmt;
+    }
+
 
     private BPLParseTreeNode expression() throws BPLParserException {
         BPLParseTreeNode var = this.var();
