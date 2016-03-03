@@ -1,0 +1,8 @@
+int y (void) {
+    int x;
+    x;
+    y;
+    write(x);
+}
+
+string meow;

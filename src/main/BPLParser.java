@@ -5,7 +5,7 @@ public class BPLParser {
     private BPLScanner scanner;
     private BPLParseTreeNode tree;
     private LinkedList<Token> cached;
-    private boolean DEBUG = false;
+    private boolean DEBUG = false; // TODO: remove excessive print statements
 
     public BPLParser(String fileName) throws BPLParserException {
         this.scanner = new BPLScanner(fileName);
@@ -105,10 +105,7 @@ public class BPLParser {
         varDec.setChild(1, var);
 
         t = this.getNextToken();
-        if (!t.isType(Token.T_SEMI)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_SEMI);
 
         return varDec;
     }
@@ -273,6 +270,12 @@ public class BPLParser {
         else if (t.isType(Token.T_WHILE)){
             node = this.whileStatement();
         }
+        else if (t.isType(Token.T_RETURN)){
+            node = this.returnStatement();
+        }
+        else if (t.isType(Token.T_WRITE) || t.isType(Token.T_WRITELN)){
+            node = this.writeStatement();
+        }
         else {
             node = this.expressionStatement();
         }
@@ -294,10 +297,7 @@ public class BPLParser {
         }
         Token t = this.getNextToken();
         int lineNum = t.getLineNumber();
-        if (!t.isType(Token.T_LCURL)) {
-            throw new BPLParserException(lineNum,
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_LCURL);
 
         BPLParseTreeNode localDec = this.localDec();
         BPLParseTreeNode stmtList = this.statementList();
@@ -330,10 +330,7 @@ public class BPLParser {
         expStmt.setChild(0, exp);
 
         t = this.getNextToken();
-        if (!t.isType(Token.T_SEMI)){
-            throw new BPLParserException(exp.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_SEMI);
 
         if (DEBUG){
             System.out.println(toStringHelper(expStmt, 0));
@@ -349,24 +346,15 @@ public class BPLParser {
             System.out.println("if statement");
         }
 
-        if (!t.isType(Token.T_IF)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_IF);
         int lineNum = t.getLineNumber();
 
         t = this.getNextToken();
-        if (!t.isType(Token.T_LPAREN)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_LPAREN);
 
         BPLParseTreeNode exp = this.expression();
         t = this.getNextToken();
-        if (!t.isType(Token.T_RPAREN)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_RPAREN);
 
         BPLParseTreeNode stmt = this.statement();
 
@@ -392,24 +380,15 @@ public class BPLParser {
 
     private BPLParseTreeNode whileStatement() throws BPLParserException {
         Token t = this.getNextToken();
-        if (!t.isType(Token.T_WHILE)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_WHILE);
         int lineNum = t.getLineNumber();
 
         t = this.getNextToken();
-        if (!t.isType(Token.T_LPAREN)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_LPAREN);
 
         BPLParseTreeNode exp = this.expression();
         t = this.getNextToken();
-        if (!t.isType(Token.T_RPAREN)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_RPAREN);
 
         BPLParseTreeNode stmt = this.statement();
 
@@ -421,6 +400,60 @@ public class BPLParser {
         return whileStmt;
     }
 
+    private BPLParseTreeNode returnStatement() throws BPLParserException {
+        Token t = this.getNextToken();
+        assertTokenType(t, Token.T_RETURN);
+        int lineNum = t.getLineNumber();
+
+        t = this.getNextToken();
+        if (t.isType(Token.T_SEMI)){
+            BPLParseTreeNode ret = new BPLParseTreeNode("RETURN_STATEMENT",
+                0, lineNum);
+        }
+
+        this.cacheToken(t);
+        BPLParseTreeNode exp = this.expression();
+
+        t = this.getNextToken();
+        assertTokenType(t, Token.T_SEMI);
+
+        BPLParseTreeNode ret = new BPLParseTreeNode("RETURN_STATEMENT",
+            1, lineNum);
+        ret.setChild(0, exp);
+        return ret;
+    }
+
+    private BPLParseTreeNode writeStatement() throws BPLParserException {
+        Token t = this.getNextToken();
+        int lineNum = t.getLineNumber();
+        if (t.isType(Token.T_WRITELN)){
+            t = this.getNextToken();
+            assertTokenType(t, Token.T_LPAREN);
+            t = this.getNextToken();
+            assertTokenType(t, Token.T_RPAREN);
+            t = this.getNextToken();
+            assertTokenType(t, Token.T_SEMI);
+            BPLParseTreeNode writeln = new BPLParseTreeNode("WRITELN_STATEMENT",
+                0, lineNum);
+            return writeln;
+        }
+
+        t = this.getNextToken();
+        assertTokenType(t, Token.T_LPAREN);
+
+        BPLParseTreeNode exp = this.expression();
+
+        t = this.getNextToken();
+        assertTokenType(t, Token.T_RPAREN);
+        t = this.getNextToken();
+        assertTokenType(t, Token.T_SEMI);
+
+        BPLParseTreeNode write = new BPLParseTreeNode("WRITE_STATEMENT",
+            1, lineNum);
+        write.setChild(0, exp);
+
+        return write;
+    }
 
     private BPLParseTreeNode expression() throws BPLParserException {
         BPLParseTreeNode var = this.var();
@@ -432,10 +465,7 @@ public class BPLParser {
 
     private BPLParseTreeNode var() throws BPLParserException {
         Token t = this.getNextToken();
-        if (!t.isType(Token.T_ID)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Unsupported grammar rule.");
-        }
+        assertTokenType(t, Token.T_ID);
         return new VariableNode(t.getValue(), t.getLineNumber());
     }
 
@@ -483,6 +513,13 @@ public class BPLParser {
             return "STRING_SPECIFIER";
         }
         return null;
+    }
+
+    private void assertTokenType(Token t, int type) throws BPLParserException {
+        if (!t.isType(type)){
+            throw new BPLParserException(t.getLineNumber(),
+                "Unsupported grammar rule at \"" + t.getValue() + "\"");
+        }
     }
 
     /** End of private methods */
