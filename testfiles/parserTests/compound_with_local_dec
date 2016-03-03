@@ -1,0 +1,13 @@
+int y (void) {
+    int x;
+    x;
+    y;
+    if (a) {
+        b;
+    }
+    else {
+        meow;
+    }
+}
+
+string meow;

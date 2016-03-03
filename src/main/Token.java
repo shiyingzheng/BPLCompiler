@@ -60,6 +60,12 @@ class Token {
         return this.type == type;
     }
 
+    public boolean isTypeSpecifier(){
+        return this.type == T_INT
+            || this.type == T_VOID
+            || this.type == T_KWSTRING;
+    }
+
     public String toString(){
         return "Token " + this.type
                + ", string " + this.value
