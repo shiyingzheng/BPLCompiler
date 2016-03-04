@@ -4,5 +4,6 @@ int y (void) {
     y;
     writeln();
 }
-
+int pewpew;
+string meow[3];
 string meow;

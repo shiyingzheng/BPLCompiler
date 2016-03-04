@@ -91,18 +91,49 @@ public class BPLParser {
     private BPLParseTreeNode varDec() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
 
-        // TODO: need support for pointer and array dec
         Token t = this.getNextToken();
         int lineNum = t.getLineNumber();
-        if (!t.isType(Token.T_ID)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Illegal variable name");
+
+        BPLParseTreeNode varDec = null;
+
+        if (t.isType(Token.T_MULT)){
+            t = this.getNextToken();
+            VariableNode var = this.var(t);
+            varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
+                3, lineNum);
+            varDec.setChild(0, specifier);
+            varDec.setChild(1, new BPLParseTreeNode("*", 0, t.getLineNumber()));
+            varDec.setChild(2, var);
         }
-        VariableNode var = new VariableNode(t.getValue(), t.getLineNumber());
-        BPLParseTreeNode varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
-            2, lineNum);
-        varDec.setChild(0, specifier);
-        varDec.setChild(1, var);
+        else {
+            VariableNode var = this.var(t);
+
+            t = this.getNextToken();
+            if (t.isType(Token.T_LBRAC)){
+                t = this.getNextToken();
+                assertTokenType(t, Token.T_NUM);
+                IntValueNode num = new IntValueNode(t.getValue(),
+                    t.getLineNumber());
+                t = this.getNextToken();
+                assertTokenType(t, Token.T_RBRAC);
+                varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
+                    5, lineNum);
+                varDec.setChild(0, specifier);
+                varDec.setChild(1, var);
+                varDec.setChild(2, new BPLParseTreeNode("[", 0,
+                    t.getLineNumber()));
+                varDec.setChild(3, num);
+                varDec.setChild(4, new BPLParseTreeNode("]", 0,
+                    t.getLineNumber()));
+            }
+            else {
+                this.cacheToken(t);
+                varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
+                    2, lineNum);
+                varDec.setChild(0, specifier);
+                varDec.setChild(1, var);
+            }
+        }
 
         t = this.getNextToken();
         assertTokenType(t, Token.T_SEMI);
@@ -181,12 +212,7 @@ public class BPLParser {
 
     private BPLParseTreeNode param() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
-        Token t = this.getNextToken();
-        if (!t.isType(Token.T_ID)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Illegal variable name");
-        }
-        VariableNode var = new VariableNode(t.getValue(), t.getLineNumber());
+        VariableNode var = this.var(this.getNextToken());
         BPLParseTreeNode param = new BPLParseTreeNode("PARAM", 2,
             specifier.getLineNumber());
         param.setChild(0, specifier);
@@ -209,13 +235,7 @@ public class BPLParser {
 
     private BPLParseTreeNode funDec() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
-
-        Token t = this.getNextToken();
-        if (!t.isType(Token.T_ID)){
-            throw new BPLParserException(t.getLineNumber(),
-                "Illegal function name");
-        }
-        VariableNode id = new VariableNode(t.getValue(), t.getLineNumber());
+        VariableNode id = this.var(this.getNextToken());
         BPLParseTreeNode params = this.params();
         BPLParseTreeNode compound = this.compoundStatement();
         BPLParseTreeNode funDec = new BPLParseTreeNode("FUNCTION",
@@ -456,15 +476,14 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode expression() throws BPLParserException {
-        BPLParseTreeNode var = this.var();
+        BPLParseTreeNode var = this.var(this.getNextToken());
         BPLParseTreeNode exp = new BPLParseTreeNode("EXPRESSION",
             1, var.getLineNumber());
         exp.setChild(0, var);
         return exp;
     }
 
-    private BPLParseTreeNode var() throws BPLParserException {
-        Token t = this.getNextToken();
+    private VariableNode var(Token t) throws BPLParserException {
         assertTokenType(t, Token.T_ID);
         return new VariableNode(t.getValue(), t.getLineNumber());
     }

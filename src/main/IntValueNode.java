@@ -1,9 +1,9 @@
 public class IntValueNode extends BPLParseTreeNode {
     private int value;
 
-    public IntValueNode(int value, int lineNum){
+    public IntValueNode(String value, int lineNum){
         super("INT_VALUE", 0, lineNum);
-        this.value = value;
+        this.value = Integer.parseInt(value);
     }
 
     @Override
