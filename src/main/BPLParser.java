@@ -1,15 +1,15 @@
 import java.util.LinkedList;
+import java.util.ArrayList;
 
 
 public class BPLParser {
     private BPLScanner scanner;
     private BPLParseTreeNode tree;
-    private LinkedList<Token> cached;
-    private boolean DEBUG = false; // TODO: remove excessive print statements
+    private LinkedList<Token> cache;
 
     public BPLParser(String fileName) throws BPLParserException {
         this.scanner = new BPLScanner(fileName);
-        cached = new LinkedList<Token>();
+        this.cache = new LinkedList<Token>();
         this.tree = this.parse();
     }
 
@@ -90,53 +90,44 @@ public class BPLParser {
 
     private BPLParseTreeNode varDec() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
-
         Token t = this.getNextToken();
         int lineNum = t.getLineNumber();
 
         BPLParseTreeNode varDec = null;
+        IdNode id = null;
 
         if (t.isType(Token.T_MULT)){
             t = this.getNextToken();
-            VariableNode var = this.var(t);
-            varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
-                3, lineNum);
-            varDec.setChild(0, specifier);
-            varDec.setChild(1, new BPLParseTreeNode("*", 0, t.getLineNumber()));
-            varDec.setChild(2, var);
+            id = this.makeID(t);
+            varDec = new BPLParseTreeNode("POINTER_VARIABLE_DECLARATION",
+                2, lineNum);
         }
         else {
-            VariableNode var = this.var(t);
-
+            id = this.makeID(t);
             t = this.getNextToken();
             if (t.isType(Token.T_LBRAC)){
                 t = this.getNextToken();
-                assertTokenType(t, Token.T_NUM);
+                this.assertTokenType(t, Token.T_NUM);
                 IntValueNode num = new IntValueNode(t.getValue(),
                     t.getLineNumber());
                 t = this.getNextToken();
-                assertTokenType(t, Token.T_RBRAC);
-                varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
-                    5, lineNum);
-                varDec.setChild(0, specifier);
-                varDec.setChild(1, var);
-                varDec.setChild(2, new BPLParseTreeNode("[", 0,
-                    t.getLineNumber()));
-                varDec.setChild(3, num);
-                varDec.setChild(4, new BPLParseTreeNode("]", 0,
-                    t.getLineNumber()));
+                this.assertTokenType(t, Token.T_RBRAC);
+                varDec = new BPLParseTreeNode("ARRAY_VARIABLE_DECLARATION",
+                    3, lineNum);
+                varDec.setChild(2, num);
             }
             else {
                 this.cacheToken(t);
                 varDec = new BPLParseTreeNode("VARIABLE_DECLARATION",
                     2, lineNum);
-                varDec.setChild(0, specifier);
-                varDec.setChild(1, var);
             }
         }
 
+        varDec.setChild(0, specifier);
+        varDec.setChild(1, id);
+
         t = this.getNextToken();
-        assertTokenType(t, Token.T_SEMI);
+        this.assertTokenType(t, Token.T_SEMI);
 
         return varDec;
     }
@@ -165,7 +156,6 @@ public class BPLParser {
         }
 
         t = this.getNextToken();
-
         BPLParseTreeNode p = null;
         if (t.isType(Token.T_VOID)){
             p = new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
@@ -179,9 +169,11 @@ public class BPLParser {
             this.cacheToken(t);
             p = this.paramList();
         }
+
         BPLParseTreeNode params = new BPLParseTreeNode("PARAMS", 1,
             p.getLineNumber());
         params.setChild(0, p);
+
         return params;
     }
 
@@ -207,55 +199,78 @@ public class BPLParser {
             param.getLineNumber());
         list.setChild(0, param);
         list.setChild(1, rest);
+
         return list;
     }
 
     private BPLParseTreeNode param() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
-        VariableNode var = this.var(this.getNextToken());
-        BPLParseTreeNode param = new BPLParseTreeNode("PARAM", 2,
-            specifier.getLineNumber());
+        Token t = this.getNextToken();
+        int lineNum = t.getLineNumber();
+
+        BPLParseTreeNode param = null;
+        IdNode id = null;
+
+        if (t.isType(Token.T_MULT)){
+            id = this.makeID(this.getNextToken());
+            param = new BPLParseTreeNode("POINTER_PARAM", 2,
+                specifier.getLineNumber());
+        }
+        else{
+            id = this.makeID(t);
+            t = this.getNextToken();
+            if (t.isType(Token.T_LBRAC)){
+                t = this.getNextToken();
+                this.assertTokenType(t, Token.T_RBRAC);
+                param = new BPLParseTreeNode("ARRAY_VARIABLE_DECLARATION",
+                    2, lineNum);
+            }
+            else {
+                this.cacheToken(t);
+                param = new BPLParseTreeNode("VARIABLE_DECLARATION",
+                    2, lineNum);
+            }
+        }
+
         param.setChild(0, specifier);
-        param.setChild(1, var);
+        param.setChild(1, id);
+
         return param;
     }
 
     private BPLParseTreeNode typeSpecifier() throws BPLParserException {
         Token t = this.getNextToken();
         String nodeType = this.typeSpecifierString(t);
+
         if (nodeType == null){
             throw new BPLParserException(t.getLineNumber(),
                 "Invalid type specifier");
         }
-
         BPLParseTreeNode node = new BPLParseTreeNode(nodeType, 0,
             t.getLineNumber());
+
         return node;
     }
 
     private BPLParseTreeNode funDec() throws BPLParserException {
         BPLParseTreeNode specifier = this.typeSpecifier();
-        VariableNode id = this.var(this.getNextToken());
+        IdNode id = this.makeID(this.getNextToken());
         BPLParseTreeNode params = this.params();
         BPLParseTreeNode compound = this.compoundStatement();
+
         BPLParseTreeNode funDec = new BPLParseTreeNode("FUNCTION",
             4, specifier.getLineNumber());
         funDec.setChild(0, specifier);
         funDec.setChild(1, id);
         funDec.setChild(2, params);
         funDec.setChild(3, compound);
+
         return funDec;
     }
 
     private BPLParseTreeNode statementList() throws BPLParserException {
-        if (DEBUG){
-            System.out.println("statement list");
-        }
         Token t = this.getNextToken();
         if (t.isType(Token.T_RCURL)) {
-            if (DEBUG){
-                System.out.println("end of statement list");
-            }
             return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
         }
 
@@ -267,16 +282,10 @@ public class BPLParser {
             2, stmt.getLineNumber());
         curlist.setChild(0, stmt);
         curlist.setChild(1, childList);
-        if (DEBUG){
-            System.out.println("end of statement list");
-        }
         return curlist;
     }
 
     private BPLParseTreeNode statement() throws BPLParserException {
-        if (DEBUG){
-            System.out.println("statement");
-        }
         Token t = this.getNextToken();
         this.cacheToken(t);
 
@@ -304,20 +313,13 @@ public class BPLParser {
             1, node.getLineNumber());
         stmt.setChild(0, node);
 
-        if (DEBUG){
-            System.out.println("end of statement");
-        }
-
         return stmt;
     }
 
     private BPLParseTreeNode compoundStatement() throws BPLParserException {
-        if (DEBUG){
-            System.out.println("compound statement");
-        }
         Token t = this.getNextToken();
         int lineNum = t.getLineNumber();
-        assertTokenType(t, Token.T_LCURL);
+        this.assertTokenType(t, Token.T_LCURL);
 
         BPLParseTreeNode localDec = this.localDec();
         BPLParseTreeNode stmtList = this.statementList();
@@ -326,18 +328,10 @@ public class BPLParser {
         node.setChild(0, localDec);
         node.setChild(1, stmtList);
 
-        if (DEBUG){
-            System.out.println("end of compound statement");
-        }
-
         return node;
     }
 
     private BPLParseTreeNode expressionStatement() throws BPLParserException {
-        if (DEBUG){
-            System.out.println("expression statement");
-        }
-
         Token t = this.getNextToken();
         if (t.isType(Token.T_SEMI)){
             return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
@@ -350,31 +344,22 @@ public class BPLParser {
         expStmt.setChild(0, exp);
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_SEMI);
-
-        if (DEBUG){
-            System.out.println(toStringHelper(expStmt, 0));
-        }
+        this.assertTokenType(t, Token.T_SEMI);
 
         return expStmt;
     }
 
     private BPLParseTreeNode ifStatement() throws BPLParserException {
         Token t = this.getNextToken();
-
-        if (DEBUG){
-            System.out.println("if statement");
-        }
-
-        assertTokenType(t, Token.T_IF);
+        this.assertTokenType(t, Token.T_IF);
         int lineNum = t.getLineNumber();
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_LPAREN);
+        this.assertTokenType(t, Token.T_LPAREN);
 
         BPLParseTreeNode exp = this.expression();
         t = this.getNextToken();
-        assertTokenType(t, Token.T_RPAREN);
+        this.assertTokenType(t, Token.T_RPAREN);
 
         BPLParseTreeNode stmt = this.statement();
 
@@ -400,15 +385,15 @@ public class BPLParser {
 
     private BPLParseTreeNode whileStatement() throws BPLParserException {
         Token t = this.getNextToken();
-        assertTokenType(t, Token.T_WHILE);
+        this.assertTokenType(t, Token.T_WHILE);
         int lineNum = t.getLineNumber();
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_LPAREN);
+        this.assertTokenType(t, Token.T_LPAREN);
 
         BPLParseTreeNode exp = this.expression();
         t = this.getNextToken();
-        assertTokenType(t, Token.T_RPAREN);
+        this.assertTokenType(t, Token.T_RPAREN);
 
         BPLParseTreeNode stmt = this.statement();
 
@@ -422,7 +407,7 @@ public class BPLParser {
 
     private BPLParseTreeNode returnStatement() throws BPLParserException {
         Token t = this.getNextToken();
-        assertTokenType(t, Token.T_RETURN);
+        this.assertTokenType(t, Token.T_RETURN);
         int lineNum = t.getLineNumber();
 
         t = this.getNextToken();
@@ -435,7 +420,7 @@ public class BPLParser {
         BPLParseTreeNode exp = this.expression();
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_SEMI);
+        this.assertTokenType(t, Token.T_SEMI);
 
         BPLParseTreeNode ret = new BPLParseTreeNode("RETURN_STATEMENT",
             1, lineNum);
@@ -448,25 +433,25 @@ public class BPLParser {
         int lineNum = t.getLineNumber();
         if (t.isType(Token.T_WRITELN)){
             t = this.getNextToken();
-            assertTokenType(t, Token.T_LPAREN);
+            this.assertTokenType(t, Token.T_LPAREN);
             t = this.getNextToken();
-            assertTokenType(t, Token.T_RPAREN);
+            this.assertTokenType(t, Token.T_RPAREN);
             t = this.getNextToken();
-            assertTokenType(t, Token.T_SEMI);
+            this.assertTokenType(t, Token.T_SEMI);
             BPLParseTreeNode writeln = new BPLParseTreeNode("WRITELN_STATEMENT",
                 0, lineNum);
             return writeln;
         }
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_LPAREN);
+        this.assertTokenType(t, Token.T_LPAREN);
 
         BPLParseTreeNode exp = this.expression();
 
         t = this.getNextToken();
-        assertTokenType(t, Token.T_RPAREN);
+        this.assertTokenType(t, Token.T_RPAREN);
         t = this.getNextToken();
-        assertTokenType(t, Token.T_SEMI);
+        this.assertTokenType(t, Token.T_SEMI);
 
         BPLParseTreeNode write = new BPLParseTreeNode("WRITE_STATEMENT",
             1, lineNum);
@@ -476,21 +461,102 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode expression() throws BPLParserException {
-        BPLParseTreeNode var = this.var(this.getNextToken());
-        BPLParseTreeNode exp = new BPLParseTreeNode("EXPRESSION",
-            1, var.getLineNumber());
-        exp.setChild(0, var);
+        ArrayList<Token> tokens = new ArrayList<Token>();
+        LinkedList<Token> stack = new LinkedList<Token>();
+        Token t = this.getNextToken();
+
+        while (!t.isType(Token.T_SEMI)) {
+            if (t.isType(Token.T_EQ) && stack.isEmpty()){
+                this.cacheTokens(tokens);
+                BPLParseTreeNode var = this.var();
+                BPLParseTreeNode subExp = this.expression();
+                BPLParseTreeNode exp = new BPLParseTreeNode(
+                    "ASSIGNMENT_EXPRESSION", 2, var.getLineNumber());
+                exp.setChild(0, var);
+                exp.setChild(1, subExp);
+                return exp;
+            }
+            else if (t.isType(Token.T_LBRAC) || t.isType(Token.T_LPAREN)){
+                stack.push(t);
+            }
+            else if (t.isType(Token.T_RBRAC) || t.isType(Token.T_RPAREN)){
+                if (stack.isEmpty()){
+                    break;
+                }
+                else {
+                    this.assertMatchingBrackets(stack.pop(), t);
+                }
+            }
+            tokens.add(t);
+            t = this.getNextToken();
+        }
+
+        if (!stack.isEmpty()){
+            throw new BPLParserException(t.getLineNumber(),
+                "Brackets do not match");
+        }
+
+        this.cacheTokens(tokens);
+        this.cacheToken(t);
+
+        BPLParseTreeNode comp = this.compExpression();
+        BPLParseTreeNode exp = new BPLParseTreeNode("EXPRESSION", 1,
+            comp.getLineNumber());
+        exp.setChild(0, comp);
+
         return exp;
     }
 
-    private VariableNode var(Token t) throws BPLParserException {
-        assertTokenType(t, Token.T_ID);
-        return new VariableNode(t.getValue(), t.getLineNumber());
+    private BPLParseTreeNode var() throws BPLParserException {
+        Token t = this.getNextToken();
+        int lineNum = t.getLineNumber();
+        BPLParseTreeNode var = null;
+        IdNode id = null;
+
+        if (t.isType(Token.T_MULT)){
+
+        }
+        else {
+            id = this.makeID(t);
+            t = this.getNextToken();
+            if (t.isType(Token.T_LBRAC)){
+                t = this.getNextToken();
+                BPLParseTreeNode num = this.expression();
+                t = this.getNextToken();
+                this.assertTokenType(t, Token.T_RBRAC);
+                var = new BPLParseTreeNode("ARRAY_VARIABLE",
+                    3, lineNum);
+                var.setChild(2, num);
+            }
+            else {
+                var = new BPLParseTreeNode("VAR", 1, id.getLineNumber());
+            }
+
+        }
+
+
+        var.setChild(0, id);
+        return var;
+    }
+
+    private BPLParseTreeNode compExpression() throws BPLParserException {
+        // TODO: so much more...
+        Token t = this.getNextToken();
+        IdNode id = this.makeID(t);
+        BPLParseTreeNode var = new BPLParseTreeNode("COMPOUND_EXPRESSION", 1,
+            id.getLineNumber());
+        var.setChild(0, id);
+        return var;
+    }
+
+    private IdNode makeID(Token t) throws BPLParserException {
+        this.assertTokenType(t, Token.T_ID);
+        return new IdNode(t.getValue(), t.getLineNumber());
     }
 
     /** Methods to get tokens */
     private boolean hasNextToken() throws BPLParserException {
-        if (cached.size() > 0){
+        if (this.cache.size() > 0){
             return true;
         }
         try {
@@ -503,8 +569,8 @@ public class BPLParser {
     }
 
     private Token getNextToken() throws BPLParserException {
-        if (cached.size() > 0){
-            Token t = cached.poll();
+        if (this.cache.size() > 0){
+            Token t = this.cache.poll();
             return t;
         }
         try {
@@ -518,7 +584,23 @@ public class BPLParser {
     }
 
     private void cacheToken(Token t) throws BPLParserException {
-        cached.offer(t);
+        this.cache.offer(t);
+    }
+
+    private void cacheTokens(ArrayList<Token> tokens){
+        for (int i = 0; i < tokens.size(); i++){
+            this.cache.offer(tokens.get(i));
+        }
+    }
+
+    private void assertMatchingBrackets(Token left, Token right)
+            throws BPLParserException {
+        if (left.isType(Token.T_LPAREN)){
+            assertTokenType(right, Token.T_RPAREN);
+        }
+        else {
+            assertTokenType(right, Token.T_RBRAC);
+        }
     }
 
     private String typeSpecifierString(Token t){
