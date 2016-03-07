@@ -33,28 +33,33 @@ class Token {
     public static final int T_AMP = 31; // &
     public static final int T_EQ = 32; // =
     public static final int T_STRING = 33; //actual string
-    public static final String T_PLACEHOLDER = "$"; // convenient for parsing
 
     private int type;
     private String value;
     private int line_num;
+    private int position;
 
-    public Token(int type, String value, int line_num){
+    public Token(int type, String value, int line_num, int position){
         this.type = type;
         this.value = value;
         this.line_num = line_num;
+        this.position = position;
     }
 
     public int getType(){
-        return type;
+        return this.type;
     }
 
     public String getValue(){
-        return value;
+        return this.value;
     }
 
     public int getLineNumber(){
-        return line_num;
+        return this.line_num;
+    }
+
+    public int getPosition(){
+        return this.position;
     }
 
     public boolean isType(int type){
@@ -65,6 +70,15 @@ class Token {
         return this.type == T_INT
             || this.type == T_VOID
             || this.type == T_KWSTRING;
+    }
+
+    public boolean isComparator() {
+        return this.type == T_LESS
+            || this.type == T_LESSEQ
+            || this.type == T_EQEQ
+            || this.type == T_NE
+            || this.type == T_GREQ
+            || this.type == T_GR;
     }
 
     public String toString(){

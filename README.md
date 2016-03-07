@@ -21,6 +21,3 @@ To run individual tests, do
 
         ./runTests.sh TokenTest
         ./runTests.sh BPLScannerTest
-
-I did not implement an EOF token but made a hasNextToken() function for the
-scanner instead.

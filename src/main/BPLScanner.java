@@ -9,6 +9,8 @@ class BPLScanner {
     private int curLineNum;
     private int curIndex;
 
+    private int position;
+
     public BPLScanner(String fileName){
         File inputFile;
         try {
@@ -20,6 +22,7 @@ class BPLScanner {
             System.exit(-1);
         }
         this.curLineNum = 0;
+        this.position = 0;
     }
 
     public boolean hasNextToken() throws BPLScannerException {
@@ -87,7 +90,7 @@ class BPLScanner {
             type = getSymbolType(token);
         }
 
-        return new Token(type, token, this.curLineNum);
+        return new Token(type, token, this.curLineNum, this.position++);
     }
 
 
