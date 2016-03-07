@@ -10,6 +10,7 @@ int y (int m, string n, int pew[], string *boo) {
     a[3 + 4] = 4;
     a[4] = 4;
     a = meow[poo];
+    3 + 2;
     3 / 2;
     t = 3 + 2;
     haha = "meowmeowmeow";
