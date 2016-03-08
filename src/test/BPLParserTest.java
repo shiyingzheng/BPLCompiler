@@ -1,24 +1,54 @@
 import org.junit.Test;
 import static org.junit.Assert.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.IOException;
 
 
 public class BPLParserTest {
     @Test
     public void testGetParseTree() throws BPLParserException {
-        BPLParser parser = new BPLParser("testfiles/parserTests/simplest_id_test");
+        BPLParser parser = new BPLParser("testfiles/parserTests/ex1");
         assertNotNull(parser.getParseTree());
     }
 
     @Test
-    public void testStatement() throws BPLParserException {
-        BPLParser parser = new BPLParser("testfiles/parserTests/simplest_id_test");
-        assertEquals(parser.toString(), "Line 1: PROGRAM\n" +
-            "\tLine 1: STATEMENT_LIST\n" +
-            "\t\tLine 1: STATEMENT\n" +
-            "\t\t\tLine 1: EXPRESSION_STMT\n" +
-            "\t\t\t\tLine 1: VariableNode id = x\n" +
-            "\t\tLine -1: <empty>"
-        );
+    public void testNoExceptions() throws BPLParserException {
+        BPLParser parser = new BPLParser("testfiles/parserTests/factor");
+        parser = new BPLParser("testfiles/parserTests/ex1");
+        parser = new BPLParser("testfiles/parserTests/ex2");
+        parser = new BPLParser("testfiles/parserTests/ex3");
+        assertTrue(true);
+    }
+
+    @Test
+    public void testAssociativity() throws BPLParserException, IOException {
+        BPLParser parser = new BPLParser("testfiles/parserTests/associativity");
+        String output = parser.toString();
+        String expected = new String(Files.readAllBytes(
+            Paths.get("testfiles/parserTests/associativity2")));
+        assertEquals(expected, output);
+    }
+
+    @Test
+    public void testFactor() throws BPLParserException, IOException {
+        BPLParser parser = new BPLParser("testfiles/parserTests/factor");
+        String output = parser.toString();
+        String expected = new String(Files.readAllBytes(
+            Paths.get("testfiles/parserTests/factor2")));
+        assertEquals(expected, output);
+    }
+
+    @Test(expected=BPLParserException.class)
+    public void testMissingSemicolon() throws BPLParserException {
+        BPLParser parser = new BPLParser("testfiles/parserTests/missing_semicolon");
+        parser.getParseTree();
+    }
+
+    @Test(expected=BPLParserException.class)
+    public void testWeirdIf() throws BPLParserException {
+        BPLParser parser = new BPLParser("testfiles/parserTests/weird_if");
+        parser.getParseTree();
     }
 
     @Test(expected=BPLParserException.class)

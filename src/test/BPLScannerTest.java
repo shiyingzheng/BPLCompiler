@@ -8,7 +8,7 @@ public class BPLScannerTest {
         BPLScanner scanner = new BPLScanner("testfiles/scannerTests/testfile");
         assertTrue(scanner.hasNextToken());
         Token t1 = scanner.getNextToken();
-        Token t2 = new Token(Token.T_INT, "int", 3);
+        Token t2 = new Token(Token.T_INT, "int", 3, 1);
         assertEquals(t1.getType(), t2.getType());
         assertEquals(t1.getValue(), t2.getValue());
         assertEquals(t1.getLineNumber(), t2.getLineNumber());
@@ -94,6 +94,20 @@ public class BPLScannerTest {
             token_num++;
         }
         assertEquals(2, token_num);
+    }
+
+    @Test
+    public void testGetPosition() throws BPLScannerException {
+        BPLScanner scanner = new BPLScanner("testfiles/scannerTests/testfile_comment");
+        assertTrue(scanner.hasNextToken());
+        int token_num = 0;
+        Token t = scanner.getNextToken();
+        while(scanner.hasNextToken()){
+            t = scanner.getNextToken();
+            assertEquals(Token.T_ID, t.getType());
+            token_num++;
+        }
+        assertEquals(1, t.getPosition());
     }
 
     @Test(expected=BPLScannerException.class)

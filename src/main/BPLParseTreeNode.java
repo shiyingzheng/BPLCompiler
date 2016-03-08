@@ -15,6 +15,10 @@ public class BPLParseTreeNode {
         return this.nodeType;
     }
 
+    public boolean isType(String type) {
+        return this.nodeType.equals(type);
+    }
+
     public int getLineNumber(){
         return this.lineNum;
     }
@@ -32,6 +36,10 @@ public class BPLParseTreeNode {
             return 0;
         }
         return this.children.length;
+    }
+
+    public boolean isEmpty() {
+        return this.nodeType.equals("<empty>");
     }
 
     public String toString(){

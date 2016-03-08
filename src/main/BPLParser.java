@@ -30,7 +30,10 @@ public class BPLParser {
         }
         s += tree.toString() + "\n";
         for (int i = 0; i < tree.numChildren(); i++){
-            s += this.toStringHelper(tree.getChild(i), depth + 1);
+            BPLParseTreeNode child = tree.getChild(i);
+            if (!child.isEmpty()){
+                s += this.toStringHelper(child, depth + 1);
+            }
         }
         return s;
     }
@@ -120,10 +123,9 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode localDec() throws BPLParserException {
-        Token t = this.getNextToken();
-        this.cacheToken(t);
+        Token t = this.peakNextToken();
         if (!t.isTypeSpecifier()){
-            return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
+            return this.makeEmpty(t);
         }
 
         BPLParseTreeNode dec = new BPLParseTreeNode("LOCAL_DEC", 2,
@@ -137,7 +139,7 @@ public class BPLParser {
         Token t = this.getNextToken();
         BPLParseTreeNode p = null;
         if (t.isType(Token.T_VOID)){
-            p = new BPLParseTreeNode("<void>", 0, t.getLineNumber());
+            p = this.makeEmpty(t);
         }
         else {
             this.cacheToken(t);
@@ -232,11 +234,9 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode statementList() throws BPLParserException {
-        Token t = this.getNextToken();
-        this.cacheToken(t);
-
+        Token t = this.peakNextToken();
         if (t.isType(Token.T_RCURL)) {
-            return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
+            return this.makeEmpty(t);
         }
 
         BPLParseTreeNode curlist = new BPLParseTreeNode("STATEMENT_LIST",
@@ -247,9 +247,7 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode statement() throws BPLParserException {
-        Token t = this.getNextToken();
-        this.cacheToken(t);
-
+        Token t = peakNextToken();
         BPLParseTreeNode node = null;
         if (t.isType(Token.T_LCURL)) {
             node = this.compoundStatement();
@@ -465,8 +463,7 @@ public class BPLParser {
 
     private BPLParseTreeNode compExpression() throws BPLParserException {
         BPLParseTreeNode e1 = this.e();
-        Token t = this.getNextToken();
-        this.cacheToken(t);
+        Token t = peakNextToken();
 
         BPLParseTreeNode compExp = null;
         if (t.isComparator()){
@@ -508,20 +505,18 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode e() throws BPLParserException {
-        BPLParseTreeNode t1 = this.t();
-        BPLParseTreeNode e = new BPLParseTreeNode("E", 3, t1.getLineNumber());
-        e.setChild(2, t1);
-        e.setChild(0, new BPLParseTreeNode("<empty>", 0, t1.getLineNumber()));
-        e.setChild(1, new BPLParseTreeNode("<empty>", 0, t1.getLineNumber()));
-        Token t = this.getNextToken();
-        this.cacheToken(t);
-
-        if (t.isType(Token.T_PLUS) || t.isType(Token.T_MINUS)){
+        BPLParseTreeNode e = this.t();
+        Token t = this.peakNextToken();
+        while (t.isAddOp()){
             BPLParseTreeNode addop = this.addop();
-            BPLParseTreeNode parent = this.e();
-            parent.setChild(0, e);
-            parent.setChild(1, addop);
-            return parent;
+            BPLParseTreeNode t2 = this.t();
+            BPLParseTreeNode e1 = new BPLParseTreeNode("E", 3,
+                e.getLineNumber());
+            e1.setChild(0, e);
+            e1.setChild(1, addop);
+            e1.setChild(2, t2);
+            e = e1;
+            t = this.peakNextToken();
         }
         return e;
     }
@@ -535,20 +530,18 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode t() throws BPLParserException {
-        BPLParseTreeNode f1 = this.f();
-        BPLParseTreeNode t1 = new BPLParseTreeNode("T", 3, f1.getLineNumber());
-        t1.setChild(2, f1);
-        t1.setChild(0, new BPLParseTreeNode("<empty>", 0, t1.getLineNumber()));
-        t1.setChild(1, new BPLParseTreeNode("<empty>", 0, t1.getLineNumber()));
-        Token t = this.getNextToken();
-        this.cacheToken(t);
-
-        if (t.isType(Token.T_MULT) || t.isType(Token.T_DIV)){
+        BPLParseTreeNode t1 = this.f();
+        Token t = this.peakNextToken();
+        while (t.isMulOp()){
             BPLParseTreeNode mulop = this.mulop();
-            BPLParseTreeNode parent = this.t();
-            parent.setChild(0, t1);
-            parent.setChild(1, mulop);
-            return parent;
+            BPLParseTreeNode f2 = this.f();
+            BPLParseTreeNode t2 = new BPLParseTreeNode("T", 3,
+                t1.getLineNumber());
+            t2.setChild(0, t1);
+            t2.setChild(1, mulop);
+            t2.setChild(2, f2);
+            t1 = t2;
+            t = this.peakNextToken();
         }
         return t1;
     }
@@ -660,7 +653,7 @@ public class BPLParser {
     private BPLParseTreeNode args() throws BPLParserException {
         Token t = this.getNextToken();
         if (t.isType(Token.T_RPAREN)){
-            return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
+            return this.makeEmpty(t);
         }
         this.cacheToken(t);
         BPLParseTreeNode args = new BPLParseTreeNode("ARGS", 1,
@@ -694,6 +687,10 @@ public class BPLParser {
     private IdNode makeID(Token t) throws BPLParserException {
         this.assertTokenType(t, Token.T_ID);
         return new IdNode(t.getValue(), t.getLineNumber());
+    }
+
+    private BPLParseTreeNode makeEmpty(Token t) throws BPLParserException {
+        return new BPLParseTreeNode("<empty>", 0, t.getLineNumber());
     }
 
     /** Methods to get tokens */
@@ -738,6 +735,12 @@ public class BPLParser {
         this.cache.add(i, t);
     }
 
+    private Token peakNextToken() throws BPLParserException {
+        Token t = this.getNextToken();
+        this.cacheToken(t);
+        return t;
+    }
+
     private void cacheTokens(ArrayList<Token> tokens)
             throws BPLParserException{
         for (int i = 0; i < tokens.size(); i++){
@@ -780,6 +783,6 @@ public class BPLParser {
     public static void main(String args[]) throws BPLParserException{
         String fileName = args[0];
         BPLParser parser = new BPLParser(fileName);
-        System.out.println(parser);
+        System.out.print(parser);
     }
 }

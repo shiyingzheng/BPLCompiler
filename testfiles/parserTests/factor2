@@ -1,0 +1,501 @@
+Line 1: PROGRAM
+  Line 1: DECLARATION_LIST
+    Line 1: DECLARATION
+      Line 1: VARIABLE_DECLARATION
+        Line 1: INT_SPECIFIER
+        Line 1: Identifier id = ajdlkshglkaf
+    Line 3: DECLARATION_LIST
+      Line 3: DECLARATION
+        Line 3: FUNCTION
+          Line 3: INT_SPECIFIER
+          Line 3: Identifier id = y
+          Line 3: PARAMS
+            Line 3: PARAM_LIST
+              Line 3: VARIABLE_DECLARATION
+                Line 3: INT_SPECIFIER
+                Line 3: Identifier id = m
+              Line 3: PARAM_LIST
+                Line 3: VARIABLE_DECLARATION
+                  Line 3: STRING_SPECIFIER
+                  Line 3: Identifier id = n
+                Line 3: PARAM_LIST
+                  Line 3: ARRAY_VARIABLE_DECLARATION
+                    Line 3: INT_SPECIFIER
+                    Line 3: Identifier id = pew
+                  Line 3: PARAM_LIST
+                    Line 3: POINTER_PARAM
+                      Line 3: STRING_SPECIFIER
+                      Line 3: Identifier id = boo
+          Line 3: COMPOUND_STATEMENT
+            Line 4: LOCAL_DEC
+              Line 4: VARIABLE_DECLARATION
+                Line 4: INT_SPECIFIER
+                Line 4: Identifier id = x
+            Line 5: STATEMENT_LIST
+              Line 5: STATEMENT
+                Line 5: EXPRESSION_STMT
+                  Line 5: EXPRESSION
+                    Line 5: COMP_EXPRESSION
+                      Line 5: F
+                        Line 5: FACTOR
+                          Line 5: Identifier id = x
+              Line 6: STATEMENT_LIST
+                Line 6: STATEMENT
+                  Line 6: EXPRESSION_STMT
+                    Line 6: EXPRESSION
+                      Line 6: COMP_EXPRESSION
+                        Line 6: F
+                          Line 6: FACTOR
+                            Line 6: Identifier id = y
+                Line 7: STATEMENT_LIST
+                  Line 7: STATEMENT
+                    Line 7: EXPRESSION_STMT
+                      Line 7: ASSIGNMENT_EXPRESSION
+                        Line 7: ARRAY_VARIABLE
+                          Line 7: Identifier id = meow
+                          Line 7: EXPRESSION
+                            Line 7: COMP_EXPRESSION
+                              Line 7: F
+                                Line 7: FACTOR
+                                  Line 7: Identifier id = poof
+                        Line 7: EXPRESSION
+                          Line 7: COMP_EXPRESSION
+                            Line 7: F
+                              Line 7: FACTOR
+                                Line 7: Identifier id = pewpew
+                  Line 8: STATEMENT_LIST
+                    Line 8: STATEMENT
+                      Line 8: EXPRESSION_STMT
+                        Line 8: ASSIGNMENT_EXPRESSION
+                          Line 8: POINTER_VARIABLE
+                            Line 8: Identifier id = meow
+                          Line 8: EXPRESSION
+                            Line 8: COMP_EXPRESSION
+                              Line 8: F
+                                Line 8: FACTOR
+                                  Line 8: Identifier id = pew
+                    Line 9: STATEMENT_LIST
+                      Line 9: STATEMENT
+                        Line 9: EXPRESSION_STMT
+                          Line 9: ASSIGNMENT_EXPRESSION
+                            Line 9: VARIABLE
+                              Line 9: Identifier id = x
+                            Line 9: EXPRESSION
+                              Line 9: COMP_EXPRESSION
+                                Line 9: F
+                                  Line 9: FACTOR
+                                    Line 9: Identifier id = y
+                      Line 10: STATEMENT_LIST
+                        Line 10: STATEMENT
+                          Line 10: WRITELN_STATEMENT
+                        Line 11: STATEMENT_LIST
+                          Line 11: STATEMENT
+                            Line 11: EXPRESSION_STMT
+                              Line 11: EXPRESSION
+                                Line 11: COMP_EXPRESSION
+                                  Line 11: F
+                                    Line 11: FACTOR
+                                      Line 11: Identifier id = a
+                                      Line 11: EXPRESSION
+                                        Line 11: COMP_EXPRESSION
+                                          Line 11: E
+                                            Line 11: F
+                                              Line 11: FACTOR
+                                                Line 11: IntValueNode id = 3
+                                            Line 11: +
+                                            Line 11: F
+                                              Line 11: FACTOR
+                                                Line 11: IntValueNode id = 4
+                          Line 12: STATEMENT_LIST
+                            Line 12: STATEMENT
+                              Line 12: EXPRESSION_STMT
+                                Line 12: ASSIGNMENT_EXPRESSION
+                                  Line 12: ARRAY_VARIABLE
+                                    Line 12: Identifier id = a
+                                    Line 12: EXPRESSION
+                                      Line 12: COMP_EXPRESSION
+                                        Line 12: E
+                                          Line 12: F
+                                            Line 12: FACTOR
+                                              Line 12: IntValueNode id = 3
+                                          Line 12: +
+                                          Line 12: F
+                                            Line 12: FACTOR
+                                              Line 12: IntValueNode id = 4
+                                  Line 12: EXPRESSION
+                                    Line 12: COMP_EXPRESSION
+                                      Line 12: F
+                                        Line 12: FACTOR
+                                          Line 12: IntValueNode id = 4
+                            Line 13: STATEMENT_LIST
+                              Line 13: STATEMENT
+                                Line 13: EXPRESSION_STMT
+                                  Line 13: ASSIGNMENT_EXPRESSION
+                                    Line 13: ARRAY_VARIABLE
+                                      Line 13: Identifier id = a
+                                      Line 13: EXPRESSION
+                                        Line 13: COMP_EXPRESSION
+                                          Line 13: F
+                                            Line 13: FACTOR
+                                              Line 13: IntValueNode id = 4
+                                    Line 13: EXPRESSION
+                                      Line 13: COMP_EXPRESSION
+                                        Line 13: F
+                                          Line 13: FACTOR
+                                            Line 13: IntValueNode id = 4
+                              Line 14: STATEMENT_LIST
+                                Line 14: STATEMENT
+                                  Line 14: EXPRESSION_STMT
+                                    Line 14: ASSIGNMENT_EXPRESSION
+                                      Line 14: VARIABLE
+                                        Line 14: Identifier id = y
+                                      Line 14: EXPRESSION
+                                        Line 14: COMP_EXPRESSION
+                                          Line 14: E
+                                            Line 14: E
+                                              Line 14: F
+                                                Line 14: FACTOR
+                                                  Line 14: IntValueNode id = 1
+                                              Line 14: +
+                                              Line 14: F
+                                                Line 14: FACTOR
+                                                  Line 14: IntValueNode id = 2
+                                            Line 14: -
+                                            Line 14: F
+                                              Line 14: FACTOR
+                                                Line 14: IntValueNode id = 3
+                                Line 15: STATEMENT_LIST
+                                  Line 15: STATEMENT
+                                    Line 15: EXPRESSION_STMT
+                                      Line 15: EXPRESSION
+                                        Line 15: COMP_EXPRESSION
+                                          Line 15: E
+                                            Line 15: E
+                                              Line 15: F
+                                                Line 15: FACTOR
+                                                  Line 15: IntValueNode id = 5
+                                              Line 15: -
+                                              Line 15: F
+                                                Line 15: FACTOR
+                                                  Line 15: IntValueNode id = 1
+                                            Line 15: -
+                                            Line 15: F
+                                              Line 15: FACTOR
+                                                Line 15: IntValueNode id = 1
+                                  Line 16: STATEMENT_LIST
+                                    Line 16: STATEMENT
+                                      Line 16: EXPRESSION_STMT
+                                        Line 16: ASSIGNMENT_EXPRESSION
+                                          Line 16: VARIABLE
+                                            Line 16: Identifier id = a
+                                          Line 16: EXPRESSION
+                                            Line 16: COMP_EXPRESSION
+                                              Line 16: F
+                                                Line 16: FACTOR
+                                                  Line 16: Identifier id = meow
+                                                  Line 16: EXPRESSION
+                                                    Line 16: COMP_EXPRESSION
+                                                      Line 16: F
+                                                        Line 16: FACTOR
+                                                          Line 16: Identifier id = poo
+                                    Line 17: STATEMENT_LIST
+                                      Line 17: STATEMENT
+                                        Line 17: EXPRESSION_STMT
+                                          Line 17: EXPRESSION
+                                            Line 17: COMP_EXPRESSION
+                                              Line 17: E
+                                                Line 17: F
+                                                  Line 17: FACTOR
+                                                    Line 17: IntValueNode id = 3
+                                                Line 17: +
+                                                Line 17: F
+                                                  Line 17: FACTOR
+                                                    Line 17: IntValueNode id = 2
+                                      Line 18: STATEMENT_LIST
+                                        Line 18: STATEMENT
+                                          Line 18: EXPRESSION_STMT
+                                            Line 18: EXPRESSION
+                                              Line 18: COMP_EXPRESSION
+                                                Line 18: T
+                                                  Line 18: F
+                                                    Line 18: FACTOR
+                                                      Line 18: IntValueNode id = 3
+                                                  Line 18: /
+                                                  Line 18: F
+                                                    Line 18: FACTOR
+                                                      Line 18: IntValueNode id = 2
+                                        Line 19: STATEMENT_LIST
+                                          Line 19: STATEMENT
+                                            Line 19: EXPRESSION_STMT
+                                              Line 19: EXPRESSION
+                                                Line 19: COMP_EXPRESSION
+                                                  Line 19: F
+                                                    Line 19: FACTOR
+                                                      Line 19: IntValueNode id = 10
+                                          Line 20: STATEMENT_LIST
+                                            Line 20: STATEMENT
+                                              Line 20: EXPRESSION_STMT
+                                                Line 20: ASSIGNMENT_EXPRESSION
+                                                  Line 20: VARIABLE
+                                                    Line 20: Identifier id = t
+                                                  Line 20: EXPRESSION
+                                                    Line 20: COMP_EXPRESSION
+                                                      Line 20: E
+                                                        Line 20: F
+                                                          Line 20: FACTOR
+                                                            Line 20: IntValueNode id = 3
+                                                        Line 20: +
+                                                        Line 20: F
+                                                          Line 20: FACTOR
+                                                            Line 20: IntValueNode id = 2
+                                            Line 21: STATEMENT_LIST
+                                              Line 21: STATEMENT
+                                                Line 21: EXPRESSION_STMT
+                                                  Line 21: ASSIGNMENT_EXPRESSION
+                                                    Line 21: VARIABLE
+                                                      Line 21: Identifier id = pew
+                                                    Line 21: EXPRESSION
+                                                      Line 21: COMP_EXPRESSION
+                                                        Line 21: E
+                                                          Line 21: T
+                                                            Line 21: F
+                                                              Line 21: FACTOR
+                                                                Line 21: IntValueNode id = 3
+                                                            Line 21: *
+                                                            Line 21: F
+                                                              Line 21: FACTOR
+                                                                Line 21: IntValueNode id = 5
+                                                          Line 21: -
+                                                          Line 21: T
+                                                            Line 21: T
+                                                              Line 21: F
+                                                                Line 21: FACTOR
+                                                                  Line 21: IntValueNode id = 4
+                                                              Line 21: /
+                                                              Line 21: F
+                                                                Line 21: FACTOR
+                                                                  Line 21: IntValueNode id = 6
+                                                            Line 21: /
+                                                            Line 21: F
+                                                              Line 21: FACTOR
+                                                                Line 21: IntValueNode id = 7
+                                              Line 22: STATEMENT_LIST
+                                                Line 22: STATEMENT
+                                                  Line 22: EXPRESSION_STMT
+                                                    Line 22: ASSIGNMENT_EXPRESSION
+                                                      Line 22: VARIABLE
+                                                        Line 22: Identifier id = a
+                                                      Line 22: EXPRESSION
+                                                        Line 22: COMP_EXPRESSION
+                                                          Line 22: T
+                                                            Line 22: F
+                                                              Line 22: FACTOR
+                                                                Line 22: IntValueNode id = 5
+                                                            Line 22: /
+                                                            Line 22: F
+                                                              Line 22: FACTOR
+                                                                Line 22: EXPRESSION
+                                                                  Line 22: COMP_EXPRESSION
+                                                                    Line 22: E
+                                                                      Line 22: F
+                                                                        Line 22: FACTOR
+                                                                          Line 22: IntValueNode id = 1
+                                                                      Line 22: +
+                                                                      Line 22: F
+                                                                        Line 22: FACTOR
+                                                                          Line 22: IntValueNode id = 2
+                                                Line 23: STATEMENT_LIST
+                                                  Line 23: STATEMENT
+                                                    Line 23: EXPRESSION_STMT
+                                                      Line 23: ASSIGNMENT_EXPRESSION
+                                                        Line 23: VARIABLE
+                                                          Line 23: Identifier id = haha
+                                                        Line 23: EXPRESSION
+                                                          Line 23: COMP_EXPRESSION
+                                                            Line 23: F
+                                                              Line 23: FACTOR
+                                                                Line 23: StringValueNode id = meowmeowmeow
+                                                  Line 24: STATEMENT_LIST
+                                                    Line 24: STATEMENT
+                                                      Line 24: EXPRESSION_STMT
+                                                        Line 24: ASSIGNMENT_EXPRESSION
+                                                          Line 24: VARIABLE
+                                                            Line 24: Identifier id = fun_stuff
+                                                          Line 24: EXPRESSION
+                                                            Line 24: COMP_EXPRESSION
+                                                              Line 24: F
+                                                                Line 24: FACTOR
+                                                                  Line 24: IntValueNode id = 0
+                                                    Line 25: STATEMENT_LIST
+                                                      Line 25: STATEMENT
+                                                        Line 25: EXPRESSION_STMT
+                                                          Line 25: EXPRESSION
+                                                            Line 25: COMP_EXPRESSION
+                                                              Line 25: F
+                                                                Line 25: FACTOR
+                                                                  Line 25: FUNCTION_CALL
+                                                                    Line 25: Identifier id = booboo
+                                                      Line 26: STATEMENT_LIST
+                                                        Line 26: STATEMENT
+                                                          Line 26: EXPRESSION_STMT
+                                                            Line 26: EXPRESSION
+                                                              Line 26: COMP_EXPRESSION
+                                                                Line 26: F
+                                                                  Line 26: FACTOR
+                                                                    Line 26: FUNCTION_CALL
+                                                                      Line 26: Identifier id = bombom
+                                                                      Line 26: ARGS
+                                                                        Line 26: ARG_LIST
+                                                                          Line 26: EXPRESSION
+                                                                            Line 26: COMP_EXPRESSION
+                                                                              Line 26: F
+                                                                                Line 26: FACTOR
+                                                                                  Line 26: Identifier id = meow
+                                                        Line 27: STATEMENT_LIST
+                                                          Line 27: STATEMENT
+                                                            Line 27: EXPRESSION_STMT
+                                                              Line 27: ASSIGNMENT_EXPRESSION
+                                                                Line 27: VARIABLE
+                                                                  Line 27: Identifier id = y
+                                                                Line 27: EXPRESSION
+                                                                  Line 27: COMP_EXPRESSION
+                                                                    Line 27: F
+                                                                      Line 27: -
+                                                                      Line 27: F
+                                                                        Line 27: FACTOR
+                                                                          Line 27: IntValueNode id = 5
+                                                          Line 28: STATEMENT_LIST
+                                                            Line 28: STATEMENT
+                                                              Line 28: EXPRESSION_STMT
+                                                                Line 28: ASSIGNMENT_EXPRESSION
+                                                                  Line 28: VARIABLE
+                                                                    Line 28: Identifier id = y
+                                                                  Line 28: EXPRESSION
+                                                                    Line 28: COMP_EXPRESSION
+                                                                      Line 28: F
+                                                                        Line 28: -
+                                                                        Line 28: F
+                                                                          Line 28: -
+                                                                          Line 28: F
+                                                                            Line 28: FACTOR
+                                                                              Line 28: IntValueNode id = 5
+                                                            Line 29: STATEMENT_LIST
+                                                              Line 29: STATEMENT
+                                                                Line 29: EXPRESSION_STMT
+                                                                  Line 29: EXPRESSION
+                                                                    Line 29: COMP_EXPRESSION
+                                                                      Line 29: F
+                                                                        Line 29: FACTOR
+                                                                          Line 29: FUNCTION_CALL
+                                                                            Line 29: Identifier id = woo
+                                                                            Line 29: ARGS
+                                                                              Line 29: ARG_LIST
+                                                                                Line 29: EXPRESSION
+                                                                                  Line 29: COMP_EXPRESSION
+                                                                                    Line 29: F
+                                                                                      Line 29: FACTOR
+                                                                                        Line 29: Identifier id = a
+                                                                                Line 29: ARG_LIST
+                                                                                  Line 29: EXPRESSION
+                                                                                    Line 29: COMP_EXPRESSION
+                                                                                      Line 29: F
+                                                                                        Line 29: FACTOR
+                                                                                          Line 29: Identifier id = b
+                                                                                  Line 29: ARG_LIST
+                                                                                    Line 29: EXPRESSION
+                                                                                      Line 29: COMP_EXPRESSION
+                                                                                        Line 29: F
+                                                                                          Line 29: FACTOR
+                                                                                            Line 29: Identifier id = c
+                                                                                    Line 29: ARG_LIST
+                                                                                      Line 29: EXPRESSION
+                                                                                        Line 29: COMP_EXPRESSION
+                                                                                          Line 29: F
+                                                                                            Line 29: FACTOR
+                                                                                              Line 29: Identifier id = d
+                                                              Line 30: STATEMENT_LIST
+                                                                Line 30: STATEMENT
+                                                                  Line 30: EXPRESSION_STMT
+                                                                    Line 30: EXPRESSION
+                                                                      Line 30: COMP_EXPRESSION
+                                                                        Line 30: F
+                                                                          Line 30: FACTOR
+                                                                            Line 30: EXPRESSION
+                                                                              Line 30: COMP_EXPRESSION
+                                                                                Line 30: F
+                                                                                  Line 30: FACTOR
+                                                                                    Line 30: Identifier id = pew
+                                                                Line 31: STATEMENT_LIST
+                                                                  Line 31: STATEMENT
+                                                                    Line 31: EXPRESSION_STMT
+                                                                      Line 31: EXPRESSION
+                                                                        Line 31: COMP_EXPRESSION
+                                                                          Line 31: T
+                                                                            Line 31: T
+                                                                              Line 31: T
+                                                                                Line 31: F
+                                                                                  Line 31: FACTOR
+                                                                                    Line 31: IntValueNode id = 3
+                                                                                Line 31: /
+                                                                                Line 31: F
+                                                                                  Line 31: FACTOR
+                                                                                    Line 31: IntValueNode id = 4
+                                                                              Line 31: /
+                                                                              Line 31: F
+                                                                                Line 31: FACTOR
+                                                                                  Line 31: IntValueNode id = 5
+                                                                            Line 31: /
+                                                                            Line 31: F
+                                                                              Line 31: FACTOR
+                                                                                Line 31: IntValueNode id = 6
+                                                                  Line 32: STATEMENT_LIST
+                                                                    Line 32: STATEMENT
+                                                                      Line 32: EXPRESSION_STMT
+                                                                        Line 32: EXPRESSION
+                                                                          Line 32: COMP_EXPRESSION
+                                                                            Line 32: E
+                                                                              Line 32: E
+                                                                                Line 32: E
+                                                                                  Line 32: F
+                                                                                    Line 32: FACTOR
+                                                                                      Line 32: IntValueNode id = 3
+                                                                                  Line 32: -
+                                                                                  Line 32: F
+                                                                                    Line 32: FACTOR
+                                                                                      Line 32: IntValueNode id = 4
+                                                                                Line 32: -
+                                                                                Line 32: F
+                                                                                  Line 32: FACTOR
+                                                                                    Line 32: IntValueNode id = 5
+                                                                              Line 32: -
+                                                                              Line 32: F
+                                                                                Line 32: FACTOR
+                                                                                  Line 32: IntValueNode id = 6
+      Line 35: DECLARATION_LIST
+        Line 35: DECLARATION
+          Line 35: FUNCTION
+            Line 35: STRING_SPECIFIER
+            Line 35: Identifier id = k
+            Line 35: PARAMS
+            Line 35: COMPOUND_STATEMENT
+        Line 39: DECLARATION_LIST
+          Line 39: DECLARATION
+            Line 39: VARIABLE_DECLARATION
+              Line 39: INT_SPECIFIER
+              Line 39: Identifier id = pewpew
+          Line 40: DECLARATION_LIST
+            Line 40: DECLARATION
+              Line 40: ARRAY_VARIABLE_DECLARATION
+                Line 40: STRING_SPECIFIER
+                Line 40: Identifier id = meow
+                Line 40: IntValueNode id = 3
+            Line 41: DECLARATION_LIST
+              Line 41: DECLARATION
+                Line 41: VARIABLE_DECLARATION
+                  Line 41: STRING_SPECIFIER
+                  Line 41: Identifier id = meow
+              Line 42: DECLARATION_LIST
+                Line 42: DECLARATION
+                  Line 42: POINTER_VARIABLE_DECLARATION
+                    Line 42: STRING_SPECIFIER
+                    Line 42: Identifier id = hmm

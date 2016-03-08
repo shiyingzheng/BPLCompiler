@@ -1,3 +1,5 @@
+int ajdlkshglkaf;
+
 int y (int m, string n, int pew[], string *boo) {
     int x;
     x;
@@ -9,10 +11,15 @@ int y (int m, string n, int pew[], string *boo) {
     a[3 + 4];
     a[3 + 4] = 4;
     a[4] = 4;
+    y = 1 + 2 - 3;
+    5 - 1 - 1;
     a = meow[poo];
     3 + 2;
     3 / 2;
+    10;
     t = 3 + 2;
+    pew = 3* 5 - 4 / 6 / 7;
+    a = 5 / (1 + 2);
     haha = "meowmeowmeow";
     fun_stuff = 0;
     booboo();
@@ -21,7 +28,14 @@ int y (int m, string n, int pew[], string *boo) {
     y = --5;
     woo(a, b, c, d);
     (pew);
+    3 / 4/ 5/6;
+    3 - 4 - 5-6;
 }
+
+string k (void) {
+
+}
+
 int pewpew;
 string meow[3];
 string meow;

@@ -81,6 +81,15 @@ class Token {
             || this.type == T_GR;
     }
 
+    public boolean isAddOp(){
+        return this.type == T_PLUS || this.type == T_MINUS;
+    }
+
+    public boolean isMulOp() {
+        return this.type == T_MULT || this.type == T_DIV
+                || this.type == T_PERCENT;
+    }
+
     public String toString(){
         return "Token " + this.type
                + ", string " + this.value
