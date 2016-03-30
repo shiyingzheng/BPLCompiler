@@ -5,21 +5,24 @@ import java.util.Iterator;
 
 
 public class BPLTypeChecker {
-    private final boolean DEBUG = true;
-    private final boolean DETAILDEBUG = true;
+    private boolean DEBUG;
+    private boolean DETAILDEBUG;
 
     private BPLParser parser;
     private BPLParseTreeNode tree;
     private HashMap<String, BPLParseTreeNode> globalSymbolTable;
     private LinkedList<BPLParseTreeNode> localDeclarations;
 
-    public BPLTypeChecker(String fileName) throws BPLTypeCheckerException{
+    public BPLTypeChecker(String fileName, boolean debug, boolean detailDebug)
+            throws BPLTypeCheckerException{
         try {
             parser = new BPLParser(fileName);
         }
         catch (Exception e) {
             throw new BPLTypeCheckerException("Error constructing parse tree");
         }
+        this.DEBUG = debug;
+        this.DETAILDEBUG = detailDebug;
         this.tree = parser.getParseTree();
         this.globalSymbolTable = new HashMap<String, BPLParseTreeNode>();
         this.localDeclarations = new LinkedList<BPLParseTreeNode>();
@@ -367,6 +370,6 @@ public class BPLTypeChecker {
 
     public static void main(String args[]) throws BPLTypeCheckerException {
         String fileName = args[0];
-        BPLTypeChecker typeChecker = new BPLTypeChecker(fileName);
+        BPLTypeChecker typeChecker = new BPLTypeChecker(fileName, true, true);
     }
 }

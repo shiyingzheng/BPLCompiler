@@ -26,3 +26,5 @@ To run individual tests, do
 
         ./runTests.sh TokenTest
         ./runTests.sh BPLScannerTest
+        ./runTests.sh BPLParserTest
+        ./runTests.sh BPLTypeCheckerTest

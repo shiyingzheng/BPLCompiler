@@ -1,117 +1,106 @@
 Line 1: PROGRAM
   Line 1: DECLARATION_LIST
-    Line 1: DECLARATION
-      Line 1: FUNCTION
-        Line 1: VOID_SPECIFIER
-        Line 1: Identifier id = algebra
-        Line 1: PARAMS
-        Line 1: COMPOUND_STATEMENT
-          Line 2: STATEMENT_LIST
-            Line 2: STATEMENT
-              Line 2: EXPRESSION_STMT
-                Line 2: EXPRESSION
-                  Line 2: COMP_EXPRESSION
-                    Line 2: E
-                      Line 2: E
-                        Line 2: F
-                          Line 2: FACTOR
-                            Line 2: IntValueNode id = 1
-                        Line 2: +
-                        Line 2: F
-                          Line 2: FACTOR
-                            Line 2: IntValueNode id = 2
-                      Line 2: +
-                      Line 2: F
-                        Line 2: FACTOR
-                          Line 2: IntValueNode id = 3
-            Line 3: STATEMENT_LIST
-              Line 3: STATEMENT
-                Line 3: EXPRESSION_STMT
-                  Line 3: EXPRESSION
-                    Line 3: COMP_EXPRESSION
-                      Line 3: T
-                        Line 3: F
-                          Line 3: FACTOR
-                            Line 3: IntValueNode id = 2
-                        Line 3: /
-                        Line 3: F
-                          Line 3: FACTOR
-                            Line 3: IntValueNode id = 3
-              Line 4: STATEMENT_LIST
-                Line 4: STATEMENT
-                  Line 4: EXPRESSION_STMT
-                    Line 4: EXPRESSION
-                      Line 4: COMP_EXPRESSION
-                        Line 4: T
-                          Line 4: T
-                            Line 4: F
-                              Line 4: FACTOR
-                                Line 4: IntValueNode id = 2
-                            Line 4: /
-                            Line 4: F
-                              Line 4: FACTOR
-                                Line 4: IntValueNode id = 3
-                          Line 4: /
-                          Line 4: F
-                            Line 4: FACTOR
-                              Line 4: IntValueNode id = 4
-                Line 5: STATEMENT_LIST
-                  Line 5: STATEMENT
-                    Line 5: EXPRESSION_STMT
-                      Line 5: ASSIGNMENT_EXPRESSION
-                        Line 5: VARIABLE
-                          Line 5: Identifier id = x
-                        Line 5: EXPRESSION
-                          Line 5: COMP_EXPRESSION
-                            Line 5: E
-                              Line 5: F
-                                Line 5: FACTOR
-                                  Line 5: IntValueNode id = 1
-                              Line 5: +
-                              Line 5: F
-                                Line 5: FACTOR
-                                  Line 5: EXPRESSION
-                                    Line 5: COMP_EXPRESSION
-                                      Line 5: E
-                                        Line 5: F
-                                          Line 5: FACTOR
-                                            Line 5: IntValueNode id = 2
-                                        Line 5: +
-                                        Line 5: F
-                                          Line 5: FACTOR
-                                            Line 5: IntValueNode id = 3
-                  Line 6: STATEMENT_LIST
-                    Line 6: STATEMENT
-                      Line 6: EXPRESSION_STMT
-                        Line 6: ASSIGNMENT_EXPRESSION
-                          Line 6: VARIABLE
-                            Line 6: Identifier id = y
-                          Line 6: EXPRESSION
-                            Line 6: COMP_EXPRESSION
-                              Line 6: T
-                                Line 6: T
-                                  Line 6: T
-                                    Line 6: F
-                                      Line 6: FACTOR
-                                        Line 6: IntValueNode id = 3
-                                    Line 6: /
-                                    Line 6: F
-                                      Line 6: FACTOR
-                                        Line 6: IntValueNode id = 4
-                                  Line 6: /
+    Line 1: FUNCTION
+      Line 1: VOID_SPECIFIER
+      Line 1: Identifier id = algebra
+      Line 1: <empty>
+      Line 1: COMPOUND_STATEMENT
+        Line 2: <empty>
+        Line 2: STATEMENT_LIST
+          Line 2: EXPRESSION_STMT
+            Line 2: COMP_EXPRESSION
+              Line 2: E
+                Line 2: E
+                  Line 2: F
+                    Line 2: FACTOR
+                      Line 2: IntValueNode id = 1
+                  Line 2: +
+                  Line 2: F
+                    Line 2: FACTOR
+                      Line 2: IntValueNode id = 2
+                Line 2: +
+                Line 2: F
+                  Line 2: FACTOR
+                    Line 2: IntValueNode id = 3
+          Line 3: STATEMENT_LIST
+            Line 3: EXPRESSION_STMT
+              Line 3: COMP_EXPRESSION
+                Line 3: T
+                  Line 3: F
+                    Line 3: FACTOR
+                      Line 3: IntValueNode id = 2
+                  Line 3: /
+                  Line 3: F
+                    Line 3: FACTOR
+                      Line 3: IntValueNode id = 3
+            Line 4: STATEMENT_LIST
+              Line 4: EXPRESSION_STMT
+                Line 4: COMP_EXPRESSION
+                  Line 4: T
+                    Line 4: T
+                      Line 4: F
+                        Line 4: FACTOR
+                          Line 4: IntValueNode id = 2
+                      Line 4: /
+                      Line 4: F
+                        Line 4: FACTOR
+                          Line 4: IntValueNode id = 3
+                    Line 4: /
+                    Line 4: F
+                      Line 4: FACTOR
+                        Line 4: IntValueNode id = 4
+              Line 5: STATEMENT_LIST
+                Line 5: EXPRESSION_STMT
+                  Line 5: ASSIGNMENT_EXPRESSION
+                    Line 5: VARIABLE
+                      Line 5: Identifier id = x
+                    Line 5: COMP_EXPRESSION
+                      Line 5: E
+                        Line 5: F
+                          Line 5: FACTOR
+                            Line 5: IntValueNode id = 1
+                        Line 5: +
+                        Line 5: F
+                          Line 5: FACTOR
+                            Line 5: COMP_EXPRESSION
+                              Line 5: E
+                                Line 5: F
+                                  Line 5: FACTOR
+                                    Line 5: IntValueNode id = 2
+                                Line 5: +
+                                Line 5: F
+                                  Line 5: FACTOR
+                                    Line 5: IntValueNode id = 3
+                Line 6: STATEMENT_LIST
+                  Line 6: EXPRESSION_STMT
+                    Line 6: ASSIGNMENT_EXPRESSION
+                      Line 6: VARIABLE
+                        Line 6: Identifier id = y
+                      Line 6: COMP_EXPRESSION
+                        Line 6: T
+                          Line 6: T
+                            Line 6: T
+                              Line 6: F
+                                Line 6: FACTOR
+                                  Line 6: IntValueNode id = 3
+                              Line 6: /
+                              Line 6: F
+                                Line 6: FACTOR
+                                  Line 6: IntValueNode id = 4
+                            Line 6: /
+                            Line 6: F
+                              Line 6: FACTOR
+                                Line 6: IntValueNode id = 5
+                          Line 6: /
+                          Line 6: F
+                            Line 6: FACTOR
+                              Line 6: COMP_EXPRESSION
+                                Line 6: E
                                   Line 6: F
                                     Line 6: FACTOR
-                                      Line 6: IntValueNode id = 5
-                                Line 6: /
-                                Line 6: F
-                                  Line 6: FACTOR
-                                    Line 6: EXPRESSION
-                                      Line 6: COMP_EXPRESSION
-                                        Line 6: E
-                                          Line 6: F
-                                            Line 6: FACTOR
-                                              Line 6: IntValueNode id = 6
-                                          Line 6: +
-                                          Line 6: F
-                                            Line 6: FACTOR
-                                              Line 6: IntValueNode id = 2
+                                      Line 6: IntValueNode id = 6
+                                  Line 6: +
+                                  Line 6: F
+                                    Line 6: FACTOR
+                                      Line 6: IntValueNode id = 2
+                  Line 7: <empty>

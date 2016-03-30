@@ -8,16 +8,16 @@ import java.io.IOException;
 public class BPLParserTest {
     @Test
     public void testGetParseTree() throws BPLParserException {
-        BPLParser parser = new BPLParser("testfiles/parserTests/ex1");
+        BPLParser parser = new BPLParser("testfiles/ex1");
         assertNotNull(parser.getParseTree());
     }
 
     @Test
     public void testNoExceptions() throws BPLParserException {
         BPLParser parser = new BPLParser("testfiles/parserTests/factor");
-        parser = new BPLParser("testfiles/parserTests/ex1");
-        parser = new BPLParser("testfiles/parserTests/ex2");
-        parser = new BPLParser("testfiles/parserTests/ex3");
+        parser = new BPLParser("testfiles/ex1");
+        parser = new BPLParser("testfiles/ex2");
+        parser = new BPLParser("testfiles/ex3");
         assertTrue(true);
     }
 
