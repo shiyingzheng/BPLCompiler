@@ -7,6 +7,10 @@ int fact(int n) {
         return n*fact(n-1);
 }
 
+void func(void) {
+    return;
+}
+
 void main(void) {
     int x;
     x = 1;
@@ -17,3 +21,5 @@ void main(void) {
         x = x + 1;
     }
 }
+
+int y;

@@ -3,8 +3,13 @@ To compile, run
         make
         make compiletest
 
+To run the Type Checker on a test file named "testfile" that is placed in the root
+directory of the project, you may use the runTypeChecker.sh script:
+
+        ./runTypeChecker.sh testfile
+
 To run the Parser on a test file named "testfile" that is placed in the root
-directory of the project, you may use the runScanner.sh script:
+directory of the project, you may use the runParser.sh script:
 
         ./runParser.sh testfile
 
