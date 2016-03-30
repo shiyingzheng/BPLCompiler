@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class BPLTypeChecker {
@@ -32,13 +33,19 @@ public class BPLTypeChecker {
         }
     }
 
-    private void type(BPLParseTreeNode tree) {
+    /**
+    * The first pass to link all variables with their declarations
+    * Exception will be thrown if no declaration is found
+    */
+
+    private void type(BPLParseTreeNode tree) throws BPLTypeCheckerException{
         if (tree.isType("PROGRAM")){
             this.typeDecList(tree.getChild(0));
         }
     }
 
-    private void typeDecList(BPLParseTreeNode tree) {
+    private void typeDecList(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         if (tree.isType("DECLARATION_LIST")) {
             for (int i = 0; i < tree.numChildren(); i++) {
                 this.typeDecList(tree.getChild(i));
@@ -49,7 +56,8 @@ public class BPLTypeChecker {
         }
     }
 
-    private void typeDec(BPLParseTreeNode tree){
+    private void typeDec(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         String name = tree.getName();
         this.globalSymbolTable.put(tree.getName(), tree);
         if (DETAILDEBUG){
@@ -61,7 +69,8 @@ public class BPLTypeChecker {
         }
     }
 
-    private void typeFunction(BPLParseTreeNode tree) {
+    private void typeFunction(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         int numParams = this.typeParams(tree.getChild(2));
         this.typeCompound(tree.getChild(3));
         while (numParams > 0) {
@@ -86,7 +95,8 @@ public class BPLTypeChecker {
         return numParams;
     }
 
-    private void typeCompound(BPLParseTreeNode tree) {
+    private void typeCompound(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
         int numLocalDecs = this.typeLocalDecs(tree.getChild(0));
         this.typeStatementList(tree.getChild(1));
         while (numLocalDecs > 0) {
@@ -111,7 +121,8 @@ public class BPLTypeChecker {
         return numLocalDecs;
     }
 
-    private void typeStatementList(BPLParseTreeNode tree) {
+    private void typeStatementList(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         if (tree.isEmpty()) {
             return;
         }
@@ -119,7 +130,8 @@ public class BPLTypeChecker {
         this.typeStatementList(tree.getChild(1));
     }
 
-    private void typeStatement(BPLParseTreeNode tree) {
+    private void typeStatement(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         if (tree.isType("EXPRESSION_STMT")) {
             this.typeExpressionStmt(tree);
         }
@@ -145,14 +157,16 @@ public class BPLTypeChecker {
         }
     }
 
-    private void typeExpressionStmt(BPLParseTreeNode tree) {
+    private void typeExpressionStmt(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         if (tree.isEmpty()) {
             return;
         }
         this.typeExpression(tree.getChild(0));
     }
 
-    private void typeExpression(BPLParseTreeNode tree) {
+    private void typeExpression(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
@@ -161,18 +175,107 @@ public class BPLTypeChecker {
             this.typeExpression(tree.getChild(1));
         }
         else {
-
+            this.typeCompExp(tree);
         }
     }
 
-    private void typeVar(BPLParseTreeNode tree) {
+    private void typeCompExp(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
+        this.typeETF(tree.getChild(0));
+        if (tree.numChildren() > 1) {
+            this.typeETF(tree.getChild(2));
+        }
+    }
+
+    private void typeETF(BPLParseTreeNode tree) throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
-        //TODO
+        if (tree.isType("F")) {
+            this.typeF(tree);
+            return;
+        }
+        this.typeETF(tree.getChild(0));
+        if (tree.numChildren() > 1) {
+            this.typeETF(tree.getChild(2));
+        }
     }
 
-    private void typeIf(BPLParseTreeNode tree) {
+    private void typeF(BPLParseTreeNode tree) throws BPLTypeCheckerException {
+        if (tree.numChildren() > 1) {
+            if (tree.getChild(0).isType("-")) {
+                this.typeF(tree.getChild(1));
+            }
+            else {
+                this.typeFactor(tree.getChild(1));
+            }
+        }
+        else {
+            this.typeFactor(tree.getChild(0));
+        }
+    }
+
+    private void typeFactor(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
+        if (DETAILDEBUG) {
+            System.out.println(tree);
+        }
+        if (tree.numChildren() > 1) {
+            this.linkDeclaration(tree.getChild(0));
+            this.typeExpression(tree.getChild(1));
+            return;
+        }
+        BPLParseTreeNode child = tree.getChild(0);
+        if (child.isType("EXPRESSION")
+            || child.isType("ASSIGNMENT_EXPRESSION")) {
+            this.typeExpression(child);
+        }
+        else if (child.isType("FUNCTION_CALL")) {
+            this.typeFunctionCall(child);
+        }
+        else if (child.isType("<id>")) {
+            this.linkDeclaration(child);
+        }
+    }
+
+    private void typeFunctionCall(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
+        if (DETAILDEBUG) {
+            System.out.println(tree);
+        }
+        this.linkDeclaration(tree.getChild(0));
+        this.typeArgs(tree.getChild(1));
+    }
+
+    private void typeArgs(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
+        if (DETAILDEBUG) {
+            System.out.println(tree);
+        }
+        if (!tree.isEmpty()) {
+            this.typeArgList(tree.getChild(0));
+        }
+    }
+
+    private void typeArgList(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
+        this.typeExpression(tree.getChild(0));
+        if (tree.numChildren() > 1) {
+            this.typeArgList(tree.getChild(1));
+        }
+    }
+
+    private void typeVar(BPLParseTreeNode tree) throws BPLTypeCheckerException {
+        if (DETAILDEBUG) {
+            System.out.println(tree);
+        }
+        this.linkDeclaration(tree);
+        if (tree.isType("ARRAY_VARIABLE")) {
+            this.typeExpression(tree.getChild(1));
+        }
+    }
+
+    private void typeIf(BPLParseTreeNode tree) throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
@@ -183,7 +286,8 @@ public class BPLTypeChecker {
         }
     }
 
-    private void typeWhile(BPLParseTreeNode tree) {
+    private void typeWhile(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
@@ -191,7 +295,8 @@ public class BPLTypeChecker {
         this.typeStatement(tree.getChild(1));
     }
 
-    private void typeReturn(BPLParseTreeNode tree) {
+    private void typeReturn(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
@@ -200,19 +305,64 @@ public class BPLTypeChecker {
         }
     }
 
-    private void typeWrite(BPLParseTreeNode tree) {
+    private void typeWrite(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
             System.out.println(tree);
         }
         this.typeExpression(tree.getChild(0));
     }
 
+    /**
+    * The second pass to check the types and match them
+    * Exception will be thrown if the types do not match
+    */
+
     private void check(BPLParseTreeNode tree) {
         //TODO
     }
 
+    /** Some helper functions */
+
+    private void linkDeclaration(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
+        String name = tree.getName();
+        BPLParseTreeNode node = this.findLocalDec(name);
+        if (node == null) {
+            node = this.findGlobalDec(name);
+        }
+        if (node == null) {
+            throw new BPLTypeCheckerException("Cannot find reference for "
+                + name);
+        }
+        tree.setDeclaration(node);
+        if (DEBUG) {
+            System.out.println(tree + " linked to "
+                + node + " " + node.getName());
+        }
+    }
+
+    private BPLParseTreeNode findLocalDec(String name) {
+        Iterator<BPLParseTreeNode> it = this.localDeclarations.iterator();
+        while (it.hasNext()) {
+            BPLParseTreeNode n = it.next();
+            if (n.getName().equals(name)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
+    private BPLParseTreeNode findGlobalDec(String name) {
+        return this.globalSymbolTable.get(name);
+    }
+
     private void printLinkedNodes(){
         //TODO
+    }
+
+    private void assertType() {
+        //TODO, more details needed
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException {

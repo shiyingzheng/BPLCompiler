@@ -399,11 +399,7 @@ public class BPLParser {
 
         this.cacheTokens(tokens);
         this.cacheToken(t);
-        BPLParseTreeNode comp = this.compExpression();
-        BPLParseTreeNode exp = new BPLParseTreeNode("EXPRESSION", 1,
-            comp.getLineNumber());
-        exp.setChild(0, comp);
-        return exp;
+        return this.compExpression();
     }
 
     private BPLParseTreeNode var() throws BPLParserException {
