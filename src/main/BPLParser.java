@@ -173,12 +173,12 @@ public class BPLParser {
             if (t.isType(Token.T_LBRAC)){
                 t = this.getNextToken();
                 this.assertTokenType(t, Token.T_RBRAC);
-                param = new BPLParseTreeNode("ARRAY_VARIABLE_DECLARATION",
+                param = new BPLParseTreeNode("ARRAY_VARIABLE_PARAM",
                     2, lineNum);
             }
             else {
                 this.cacheToken(t);
-                param = new BPLParseTreeNode("VARIABLE_DECLARATION",
+                param = new BPLParseTreeNode("VARIABLE_PARAM",
                     2, lineNum);
             }
         }
@@ -199,7 +199,16 @@ public class BPLParser {
     }
 
     private BPLParseTreeNode funDec() throws BPLParserException {
-        BPLParseTreeNode specifier = this.typeSpecifier();
+        Token t = this.getNextToken();
+        BPLParseTreeNode specifier = null;
+        if (t.isType(Token.T_VOID)) {
+            specifier = new BPLParseTreeNode("VOID_SPECIFIER", 0,
+                t.getLineNumber());
+        }
+        else{
+            this.cacheToken(t);
+            specifier = this.typeSpecifier();
+        }
         IdNode id = this.makeID(this.getNextToken());
         assertTokenType(this.getNextToken(), Token.T_LPAREN);
         BPLParseTreeNode params = this.params();
@@ -415,7 +424,7 @@ public class BPLParser {
             if (t.isType(Token.T_LBRAC)){
                 BPLParseTreeNode num = this.expression();
                 this.assertTokenType(this.getNextToken(), Token.T_RBRAC);
-                var = new BPLParseTreeNode("ARRAY_VARIABLE", 2, lineNum);
+                var = new BPLParseTreeNode("ARRAY_ELMT_VARIABLE", 2, lineNum);
                 var.setChild(1, num);
             }
             else {
@@ -534,18 +543,15 @@ public class BPLParser {
             return f;
         }
         else if (t.isType(Token.T_AMP)) {
-            BPLParseTreeNode f = new BPLParseTreeNode("F", 2, lineNum);
-            f.setChild(0, new BPLParseTreeNode("&", 0, lineNum));
-            f.setChild(1, this.factor());
+            BPLParseTreeNode f = new BPLParseTreeNode("REF_F", 1, lineNum);
+            f.setChild(0, this.factor());
             return f;
         }
         else if (t.isType(Token.T_MULT)) {
-            BPLParseTreeNode f = new BPLParseTreeNode("F", 2, lineNum);
-            f.setChild(0, new BPLParseTreeNode("*", 0, lineNum));
-            f.setChild(1, this.factor());
+            BPLParseTreeNode f = new BPLParseTreeNode("DEREF_F", 1, lineNum);
+            f.setChild(0, this.factor());
             return f;
         }
-
         this.cacheToken(t);
         BPLParseTreeNode f = new BPLParseTreeNode("F", 1, lineNum);
         f.setChild(0, this.factor());
@@ -727,9 +733,6 @@ public class BPLParser {
     private String typeSpecifierString(Token t){
         if (t.isType(Token.T_INT)){
             return "INT_SPECIFIER";
-        }
-        if (t.isType(Token.T_VOID)){
-            return "VOID_SPECIFIER";
         }
         if (t.isType(Token.T_KWSTRING)){
             return "STRING_SPECIFIER";
