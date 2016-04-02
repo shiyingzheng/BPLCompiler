@@ -324,9 +324,11 @@ public class BPLTypeChecker {
         }
         String nodeType = dec.getChild(0).getNodeType();
         if (nodeType.equals("INT_SPECIFIER")) {
+            tree.setTreeType("INT");
             return "INT";
         }
         if (nodeType.equals("STRING_SPECIFIER")) {
+            tree.setTreeType("STRING");
             return "STRING";
         }
         return null;
