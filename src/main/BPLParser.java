@@ -52,14 +52,11 @@ public class BPLParser {
         if (this.hasNextToken()){
             list = new BPLParseTreeNode("DECLARATION_LIST",
                 2, declaration.getLineNumber());
+            list.setChild(0, declaration);
             list.setChild(1, this.declarationList());
+            return list;
         }
-        else {
-            list = new BPLParseTreeNode("DECLARATION_LIST",
-                1, declaration.getLineNumber());
-        }
-        list.setChild(0, declaration);
-        return list;
+        return declaration;
     }
 
     private BPLParseTreeNode declaration() throws BPLParserException {

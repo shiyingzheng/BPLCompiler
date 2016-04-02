@@ -321,10 +321,25 @@ public class BPLTypeChecker {
     * Exception will be thrown if the types do not match
     */
 
-    private void check(BPLParseTreeNode tree) {
-        //TODO
+/*    private void check(BPLParseTreeNode tree) {
+        this.checkDecList(tree.getChild(0));
     }
 
+    private void checkDecList(BPLParseTreeNode tree) {
+        if (tree.isType("DECLARATION_LIST")) {
+            for (int i = 0; i < tree.numChildren(); i++) {
+                this.checkDecList(tree.getChild(i));
+            }
+        }
+        else {
+            this.checkDec(tree);
+        }
+    }
+
+    private void checkDec(BPLParseTreeNode tree) {
+
+    }
+*/
     /** Some helper functions */
 
     private void linkDeclaration(BPLParseTreeNode tree)
@@ -340,8 +355,7 @@ public class BPLTypeChecker {
         }
         tree.setDeclaration(node);
         if (DEBUG) {
-            System.out.println(tree + " linked to "
-                + node + " " + node.getName());
+            this.printLinkedNodes(tree, node);
         }
     }
 
@@ -360,12 +374,16 @@ public class BPLTypeChecker {
         return this.globalSymbolTable.get(name);
     }
 
-    private void printLinkedNodes(){
-        //TODO
+    private void printLinkedNodes(BPLParseTreeNode t1, BPLParseTreeNode t2){
+        System.out.println(t1 + " linked to " + t2 + " " + t2.getName());
     }
 
-    private void assertType() {
+    private void assertType(BPLParseTreeNode tree, String type) {
         //TODO, more details needed
+    }
+
+    private void assertEqualTypes(BPLParseTreeNode t1, BPLParseTreeNode t2) {
+        //TODO
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException {
