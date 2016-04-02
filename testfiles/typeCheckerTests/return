@@ -1,0 +1,11 @@
+int y (void) {
+    int x;
+    x;
+    y;
+    while (x) {
+        y;
+    }
+    return x;
+}
+
+string meow;

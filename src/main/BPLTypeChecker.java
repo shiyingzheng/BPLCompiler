@@ -26,8 +26,8 @@ public class BPLTypeChecker {
         this.tree = parser.getParseTree();
         this.globalSymbolTable = new HashMap<String, BPLParseTreeNode>();
         this.localDeclarations = new LinkedList<BPLParseTreeNode>();
-        this.type(this.tree);
-        this.check(this.tree);
+        this.typeCheck(this.tree);
+        //this.check(this.tree);
         if (DETAILDEBUG) {
             System.out.println("\nGlobal symbol table:");
             System.out.println(this.globalSymbolTable);
@@ -41,25 +41,25 @@ public class BPLTypeChecker {
     * Exception will be thrown if no declaration is found
     */
 
-    private void type(BPLParseTreeNode tree) throws BPLTypeCheckerException{
+    private void typeCheck(BPLParseTreeNode tree) throws BPLTypeCheckerException{
         if (tree.isType("PROGRAM")){
-            this.typeDecList(tree.getChild(0));
+            this.typeCheckDecList(tree.getChild(0));
         }
     }
 
-    private void typeDecList(BPLParseTreeNode tree)
+    private void typeCheckDecList(BPLParseTreeNode tree)
             throws BPLTypeCheckerException{
         if (tree.isType("DECLARATION_LIST")) {
             for (int i = 0; i < tree.numChildren(); i++) {
-                this.typeDecList(tree.getChild(i));
+                this.typeCheckDecList(tree.getChild(i));
             }
         }
         else {
-            this.typeDec(tree);
+            this.typeCheckDec(tree);
         }
     }
 
-    private void typeDec(BPLParseTreeNode tree)
+    private void typeCheckDec(BPLParseTreeNode tree)
             throws BPLTypeCheckerException{
         String name = tree.getName();
         this.globalSymbolTable.put(tree.getName(), tree);
@@ -68,18 +68,20 @@ public class BPLTypeChecker {
             System.out.println(" " + name);
         }
         if (tree.isType("FUNCTION")) {
-            this.typeFunction(tree);
+            this.typeCheckFunction(tree);
         }
     }
 
-    private void typeFunction(BPLParseTreeNode tree)
+    private void typeCheckFunction(BPLParseTreeNode tree)
             throws BPLTypeCheckerException{
         int numParams = this.typeParams(tree.getChild(2));
         this.typeCompound(tree.getChild(3));
+        this.checkCompound(tree.getChild(3));
         while (numParams > 0) {
             numParams--;
             this.localDeclarations.removeFirst();
         }
+        this.checkReturnType(tree, tree.getChild(0).getNodeType());
     }
 
     private int typeParams(BPLParseTreeNode tree) {
@@ -105,6 +107,24 @@ public class BPLTypeChecker {
         while (numLocalDecs > 0) {
             numLocalDecs--;
             this.localDeclarations.removeFirst();
+        }
+    }
+
+    private void checkCompound(BPLParseTreeNode tree) {
+        //TODO
+    }
+
+    private void checkReturnType(BPLParseTreeNode tree, String type)
+            throws BPLTypeCheckerException{
+        if (tree.getNodeType().equals("RETURN_STATEMENT")) {
+            if (tree.numChildren() > 0) {
+                BPLParseTreeNode child = tree.getChild(0);
+                this.assertType(this.checkExpression(child),
+                    type, child.getLineNumber());
+            }
+        }
+        for (int i = 0; i < tree.numChildren(); i++){
+            this.checkReturnType(tree.getChild(i), type);
         }
     }
 
@@ -180,6 +200,10 @@ public class BPLTypeChecker {
         else {
             this.typeCompExp(tree);
         }
+    }
+
+    private String checkExpression(BPLParseTreeNode tree) {
+        return null;
     }
 
     private void typeCompExp(BPLParseTreeNode tree)
@@ -378,8 +402,17 @@ public class BPLTypeChecker {
         System.out.println(t1 + " linked to " + t2 + " " + t2.getName());
     }
 
-    private void assertType(BPLParseTreeNode tree, String type) {
-        //TODO, more details needed
+    private void assertType(String t1, String t2, int lineNumber)
+            throws BPLTypeCheckerException{
+        //TODO
+        if (DETAILDEBUG) {
+            System.out.println("Line " + lineNumber + " asserting types "
+                + t1 + " and " + t2);
+        }
+        //if (!t1.equals(t2)) {
+        //    throw new BPLTypeCheckerException("Line " + lineNumber + ": " +
+        //        "expected type " + t2 + " but get " + t1);
+        //}
     }
 
     private void assertEqualTypes(BPLParseTreeNode t1, BPLParseTreeNode t2) {
