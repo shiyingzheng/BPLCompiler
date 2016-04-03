@@ -35,7 +35,7 @@ public class BPLTypeChecker {
             System.out.println(this.localDeclarations);
         }
     }
-
+    //TODO: save all tree types once they're found, use them if available
     private void typeCheck(BPLParseTreeNode tree) throws BPLTypeCheckerException{
         if (tree.isType("PROGRAM")){
             this.typeCheckDecList(tree.getChild(0));
@@ -106,7 +106,23 @@ public class BPLTypeChecker {
 
     private void checkReturnType(BPLParseTreeNode tree, String type)
             throws BPLTypeCheckerException{
-        if (tree.getNodeType().equals("RETURN_STATEMENT")) {
+        if (type.equals("INT_SPECIFIER")) {
+            type = "INT";
+        }
+        else if (type.equals("STRING_SPECIFIER")) {
+            type = "STRING";
+        }
+        if (tree.isType("RETURN_STATEMENT")) {
+            if (DETAILDEBUG) {
+                System.out.println("Checking return type "
+                    + tree);
+            }
+            if (type.equals("VOID_SPECIFIER")){
+                if (tree.numChildren() > 0) {
+                    throw new BPLTypeCheckerException(tree.getLineNumber(),
+                        "Function should not return any value");
+                }
+            }
             if (tree.numChildren() > 0) {
                 BPLParseTreeNode child = tree.getChild(0);
                 this.assertType(this.checkExpression(child),
@@ -186,23 +202,66 @@ public class BPLTypeChecker {
         if (tree.isType("ASSIGNMENT_EXPRESSION")){
             this.typeVar(tree.getChild(0));
             this.typeCheckExpression(tree.getChild(1));
-            String t1 = this.checkVar(tree.getChild(0));
-            String t2 = this.checkExpression(tree.getChild(1));
-            this.assertType(t1, t2, tree.getLineNumber());
         }
         else {
             this.typeCompExp(tree);
         }
+        this.checkExpression(tree);
     }
 
-    private String checkExpression(BPLParseTreeNode tree) {
+    private String checkExpression(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
         String treeType = tree.getTreeType();
         if (treeType != null) {
             return treeType;
         }
-        //TODO
-        //need to check/set treeType
-        return null;
+        if (tree.isType("ASSIGNMENT_EXPRESSION")) {
+            treeType = this.checkAssignmentExpression(tree);
+        }
+        else {
+            treeType = this.checkCompExp(tree);
+        }
+        tree.setTreeType(treeType);
+        return treeType;
+    }
+
+    private String checkAssignmentExpression(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
+        BPLParseTreeNode var = tree.getChild(0);
+        String t1 = this.checkVar(var);
+        String t2 = this.checkExpression(tree.getChild(1));
+        this.assertType(t1, t2, tree.getLineNumber());
+        if (var.isType("VARIABLE")
+                && var.getDeclaration().getNodeType().contains("POINTER")) {
+            this.checkPtrAddrAssign(var, tree.getChild(1));
+        }
+        return t1;
+    }
+
+    private void checkPtrAddrAssign(BPLParseTreeNode ptr, BPLParseTreeNode e)
+            throws BPLTypeCheckerException {
+        boolean ref = false;
+        while(!e.isType("<id>")) {
+            if (e.isType("REF_F")) {
+                ref = true;
+            }
+            e = e.getChild(0);
+        }
+        if (ref == false) {
+            throw new BPLTypeCheckerException(ptr.getLineNumber(),
+                "right hand side of pointer address assignment not valid");
+        }
+        String t1 = ptr.getDeclaration().getChild(0).getNodeType();
+        String t2 = e.getDeclaration().getChild(0).getNodeType();
+        if (DETAILDEBUG) {
+            System.out.println("Line " + ptr.getLineNumber() +
+                ": checking pointer address for " + ptr.getName() + " and "
+                + e.getName());
+        }
+        if (!t1.equals(t2)){
+            throw new BPLTypeCheckerException(ptr.getLineNumber(),
+                "Invalid pointer address assignment");
+        }
     }
 
     private void typeCompExp(BPLParseTreeNode tree)
@@ -213,9 +272,24 @@ public class BPLTypeChecker {
         }
     }
 
+    private String checkCompExp(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
+        String treeType = tree.getTreeType();
+        if (treeType != null) {
+            return treeType;
+        }
+        String t1 = this.checkETF(tree.getChild(0));
+        if (tree.numChildren() > 1) {
+            String t2 = this.checkETF(tree.getChild(2));
+            assertType(t1, t2, tree.getLineNumber());
+        }
+        tree.setTreeType(t1);
+        return t1;
+    }
+
     private void typeETF(BPLParseTreeNode tree) throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
-            System.out.println(tree);
+            System.out.println(tree + " typing");
         }
         if (tree.isType("F") || tree.isType("REF_F") || tree.isType("DEREF_F")){
             this.typeF(tree);
@@ -227,6 +301,29 @@ public class BPLTypeChecker {
         }
     }
 
+    private String checkETF(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
+        if (DETAILDEBUG) {
+            System.out.println(tree + " checking");
+        }
+        String treeType = tree.getTreeType();
+        if (treeType != null) {
+            return treeType;
+        }
+        if (tree.isType("F") || tree.isType("REF_F") || tree.isType("DEREF_F")){
+            treeType = this.checkF(tree);
+            tree.setTreeType(treeType);
+            return treeType;
+        }
+        String t1 = this.checkETF(tree.getChild(0));
+        if (tree.numChildren() > 1) {
+            String t2 = this.checkETF(tree.getChild(2));
+            assertType(t1, t2, tree.getLineNumber());
+        }
+        tree.setTreeType(t1);
+        return t1;
+    }
+
     private void typeF(BPLParseTreeNode tree) throws BPLTypeCheckerException {
         if (tree.numChildren() > 1) {
             this.typeF(tree.getChild(1));
@@ -234,6 +331,45 @@ public class BPLTypeChecker {
         else {
             this.typeFactor(tree.getChild(0));
         }
+    }
+
+    private String checkF(BPLParseTreeNode tree) throws BPLTypeCheckerException{
+        String treeType = tree.getTreeType();
+        if (treeType != null) {
+            return treeType;
+        }
+        if (tree.numChildren() > 1) {
+            treeType = this.checkF(tree.getChild(1));
+        }
+        else {
+            if (tree.isType("REF_F")) {
+                treeType = "INT";
+                this.checkFactor(tree.getChild(0));
+            }
+            else if (tree.isType("DEREF_F")) {
+                this.checkFactor(tree.getChild(0));
+                BPLParseTreeNode f = tree;
+                while(!f.isType("<id>")) {
+                    f = f.getChild(0);
+                }
+                treeType = f.getDeclaration().getChild(0).getNodeType();
+                if (treeType.equals("INT_SPECIFIER")) {
+                    treeType = "INT";
+                }
+                else if (treeType.equals("STRING_SPECIFIER")) {
+                    treeType = "STRING";
+                }
+                else {
+                    throw new BPLTypeCheckerException(tree.getLineNumber(),
+                        "Invalid de-reference");
+                }
+            }
+            else {
+                treeType = this.checkFactor(tree.getChild(0));
+            }
+        }
+        tree.setTreeType(treeType);
+        return treeType;
     }
 
     private void typeFactor(BPLParseTreeNode tree)
@@ -259,6 +395,41 @@ public class BPLTypeChecker {
         }
     }
 
+    private String checkFactor(BPLParseTreeNode tree)
+            throws BPLTypeCheckerException{
+        String treeType = null;
+        if (treeType != null) {
+            return treeType;
+        }
+        BPLParseTreeNode child = tree.getChild(0);
+        if (child.isType("read()")) {
+            child.setTreeType("INT");
+            treeType = "INT";
+        }
+        else {
+            if (child.isType("<id>")) {
+
+                if (tree.numChildren() > 1){
+
+                }
+            }
+            else if (child.isType("FUNCTION_CALL")) {
+                treeType = this.checkFunctonCall(child);
+            }
+            else if (child.isType("<num>")) {
+                treeType = "INT";
+            }
+            else if (child.isType("<string>")) {
+                treeType = "STRING";
+            }
+            else { // expression
+                treeType = this.checkExpression(child);
+            }
+        }
+        tree.setTreeType(treeType);
+        return treeType;
+    }
+
     private void typeFunctionCall(BPLParseTreeNode tree)
             throws BPLTypeCheckerException {
         if (DETAILDEBUG) {
@@ -266,6 +437,11 @@ public class BPLTypeChecker {
         }
         this.linkDeclaration(tree.getChild(0));
         this.typeArgs(tree.getChild(1));
+    }
+
+    private String checkFunctonCall(BPLParseTreeNode tree) {
+        //TODO
+        return null;
     }
 
     private void typeArgs(BPLParseTreeNode tree)
@@ -302,24 +478,25 @@ public class BPLTypeChecker {
         if (treeType != null) {
             return treeType;
         }
+        // TODO: allow A = B where A and B are array pointers
         BPLParseTreeNode dec = tree.getDeclaration();
-        if (tree.getNodeType().equals("POINTER_VARIABLE")) {
+        if (tree.isType("VARIABLE") && dec.getNodeType().contains("POINTER")) {
+            return "INT";
+        }
+        if (tree.isType("POINTER_VARIABLE")) {
             if (!dec.getNodeType().contains("POINTER")) {
-                throw new BPLTypeCheckerException(tree.getLineNumber(),
-                    "Invalid assignment");
+                this.varException(tree, dec);
             }
         }
-        else if (tree.getNodeType().equals("ARRAY_ELMT_VARIABLE")){
+        else if (tree.isType("ARRAY_ELMT_VARIABLE")){
             if (!dec.getNodeType().contains("ARRAY")) {
-                throw new BPLTypeCheckerException(tree.getLineNumber(),
-                    "Invalid assignment");
+                this.varException(tree, dec);
             }
         }
         else {
-            if (!dec.getNodeType().equals("VARIABLE_DECLARATION")
-                    && !dec.getNodeType().equals("VARIABLE_PARAM")) {
-                throw new BPLTypeCheckerException(tree.getLineNumber(),
-                    "Invalid assignment");
+            if (!dec.isType("VARIABLE_DECLARATION")
+                    && !dec.isType("VARIABLE_PARAM")) {
+                this.varException(tree, dec);
             }
         }
         String nodeType = dec.getChild(0).getNodeType();
@@ -422,6 +599,13 @@ public class BPLTypeChecker {
         //    throw new BPLTypeCheckerException(lineNumber ,
         //        "expected type " + t2 + " but get " + t1);
         //}
+    }
+
+    private void varException(BPLParseTreeNode tree, BPLParseTreeNode dec)
+            throws BPLTypeCheckerException{
+        throw new BPLTypeCheckerException(tree.getLineNumber(),
+            "Invalid variable " + tree.getNodeType() + " declared as "
+            + dec.getNodeType());
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException {
