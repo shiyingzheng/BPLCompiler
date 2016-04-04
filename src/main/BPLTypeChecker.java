@@ -277,7 +277,8 @@ public class BPLTypeChecker {
         String t1 = this.checkETF(tree.getChild(0));
         if (tree.numChildren() > 1) {
             String t2 = this.checkETF(tree.getChild(2));
-            assertType(t1, t2, tree.getLineNumber());
+            assertType(t1, "INT", tree.getLineNumber());
+            assertType(t2, "INT", tree.getLineNumber());
         }
         return t1;
     }
