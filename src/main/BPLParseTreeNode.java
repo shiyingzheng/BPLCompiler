@@ -3,7 +3,6 @@ public class BPLParseTreeNode {
     private BPLParseTreeNode[] children;
     private String nodeType;
     private BPLParseTreeNode declaration;
-    private String treeType;
 
     public BPLParseTreeNode(String nodeType, int numChildren, int lineNum){
         this.nodeType = nodeType;
@@ -51,14 +50,6 @@ public class BPLParseTreeNode {
 
     public void setDeclaration(BPLParseTreeNode node) {
         this.declaration = node;
-    }
-
-    public String getTreeType() {
-        return this.treeType;
-    }
-
-    public void setTreeType(String type) {
-        this.treeType = type;
     }
 
     public int numChildren(){

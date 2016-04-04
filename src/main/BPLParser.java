@@ -137,20 +137,20 @@ public class BPLParser {
     private BPLParseTreeNode paramList() throws BPLParserException {
         BPLParseTreeNode param = this.param();
         Token t = this.getNextToken();
-        BPLParseTreeNode list = null;
+        BPLParseTreeNode list = new BPLParseTreeNode("PARAM_LIST",
+            2, param.getLineNumber());
+        list.setChild(0, param);
         if (t.isType(Token.T_RPAREN)){
             this.cacheToken(t);
-            list = new BPLParseTreeNode("PARAM_LIST", 1, param.getLineNumber());
+            list.setChild(1, this.makeEmpty(t));
         }
         else if (t.isType(Token.T_COMMA)) {
-            list = new BPLParseTreeNode("PARAM_LIST", 2, param.getLineNumber());
             list.setChild(1, this.paramList());
         }
         else {
             throw new BPLParserException(t.getLineNumber(),
                 "Illegal function params");
         }
-        list.setChild(0, param);
         return list;
     }
 
@@ -628,31 +628,29 @@ public class BPLParser {
             return this.makeEmpty(t);
         }
         this.cacheToken(t);
-        BPLParseTreeNode args = new BPLParseTreeNode("ARGS", 1,
-            t.getLineNumber());
-        args.setChild(0, this.argList());
+        BPLParseTreeNode argsList = this.argList();
         assertTokenType(this.getNextToken(), Token.T_RPAREN);
-        return args;
+        return argsList;
     }
 
     private BPLParseTreeNode argList() throws BPLParserException {
         BPLParseTreeNode exp = this.expression();
         Token t = this.getNextToken();
 
-        BPLParseTreeNode list = null;
+        BPLParseTreeNode list = new BPLParseTreeNode("ARG_LIST",
+            2, exp.getLineNumber());
+        list.setChild(0, exp);
         if (t.isType(Token.T_RPAREN)){
             this.cacheToken(t);
-            list = new BPLParseTreeNode("ARG_LIST", 1, exp.getLineNumber());
+            list.setChild(1, this.makeEmpty(t));
         }
         else if (t.isType(Token.T_COMMA)) {
-            list = new BPLParseTreeNode("ARG_LIST", 2, exp.getLineNumber());
             list.setChild(1, this.argList());
         }
         else {
             throw new BPLParserException(t.getLineNumber(),
                 "Illegal function params");
         }
-        list.setChild(0, exp);
         return list;
     }
 
@@ -732,10 +730,10 @@ public class BPLParser {
 
     private String typeSpecifierString(Token t){
         if (t.isType(Token.T_INT)){
-            return "INT_SPECIFIER";
+            return "INT";
         }
         if (t.isType(Token.T_KWSTRING)){
-            return "STRING_SPECIFIER";
+            return "STRING";
         }
         return null;
     }
