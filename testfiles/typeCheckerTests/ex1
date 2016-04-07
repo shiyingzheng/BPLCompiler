@@ -14,6 +14,7 @@ void func(void) {
 void main(void) {
     int x;
     int y;
+    int *z;
     x = 1;
     while (x < 10) {
         write(x);
@@ -23,6 +24,7 @@ void main(void) {
     }
     x = y = -1;
     x = x * y;
+    z = &(x);
 }
 
 int y;

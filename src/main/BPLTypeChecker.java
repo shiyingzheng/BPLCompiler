@@ -238,6 +238,9 @@ public class BPLTypeChecker {
             if (e.isType("REF_F")) {
                 ref = true;
             }
+            if (e.numChildren() > 1) {
+                ref = false;
+            }
             if (e.isType("<string>") || e.isType("<num>")) {
                 throw new BPLTypeCheckerException(ptr.getLineNumber(),
                     "right hand side of pointer address assignment not valid");
@@ -316,11 +319,11 @@ public class BPLTypeChecker {
     }
 
     private void typeF(BPLParseTreeNode tree) throws BPLTypeCheckerException {
+        if (!tree.getChild(0).isType("-")) {
+            this.typeFactor(tree.getChild(0));
+        }
         if (tree.numChildren() > 1) {
             this.typeF(tree.getChild(1));
-        }
-        else {
-            this.typeFactor(tree.getChild(0));
         }
     }
 
@@ -363,7 +366,7 @@ public class BPLTypeChecker {
             return;
         }
         BPLParseTreeNode child = tree.getChild(0);
-        if (child.isType("EXPRESSION")
+        if (child.isType("COMP_EXPRESSION")
             || child.isType("ASSIGNMENT_EXPRESSION")) {
             this.typeCheckExpression(child);
         }
@@ -609,6 +612,19 @@ public class BPLTypeChecker {
         throw new BPLTypeCheckerException(tree.getLineNumber(),
             "Invalid variable " + tree.getNodeType() + " declared as "
             + dec.getNodeType());
+    }
+
+    private String toStringHelper(BPLParseTreeNode tree, int depth){
+        String s = "";
+        for (int i = 0; i < depth; i++){
+            s += "  ";
+        }
+        s += tree.toString() + "\n";
+        for (int i = 0; i < tree.numChildren(); i++){
+            BPLParseTreeNode child = tree.getChild(i);
+            s += this.toStringHelper(child, depth + 1);
+        }
+        return s;
     }
 
     public static void main(String args[])
