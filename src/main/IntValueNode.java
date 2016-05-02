@@ -6,6 +6,10 @@ public class IntValueNode extends BPLParseTreeNode {
         this.value = Integer.parseInt(value);
     }
 
+    public int getValue() {
+        return this.value;
+    }
+
     @Override
     public String toString(){
         return "Line " + this.getLineNumber()

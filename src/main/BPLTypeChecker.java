@@ -14,20 +14,31 @@ public class BPLTypeChecker {
     private LinkedList<BPLParseTreeNode> localDeclarations;
 
     public BPLTypeChecker(String fileName, boolean debug, boolean detailDebug)
-            throws BPLTypeCheckerException, BPLParserException{
-        parser = new BPLParser(fileName);
-        this.DEBUG = debug;
-        this.DETAILDEBUG = detailDebug;
-        this.tree = parser.getParseTree();
-        this.globalSymbolTable = new HashMap<String, BPLParseTreeNode>();
-        this.localDeclarations = new LinkedList<BPLParseTreeNode>();
-        this.typeCheck(this.tree);
+            throws BPLTypeCheckerException {
+        try {
+            parser = new BPLParser(fileName);
+            this.DEBUG = debug;
+            this.DETAILDEBUG = detailDebug;
+            this.tree = parser.getParseTree();
+            this.globalSymbolTable = new HashMap<String, BPLParseTreeNode>();
+            this.localDeclarations = new LinkedList<BPLParseTreeNode>();
+            this.typeCheck(this.tree);
+        }
+        catch (BPLParserException e) {
+            String lineNum = e.getMessage().split(":")[0];
+            throw new BPLTypeCheckerException(lineNum + ": Parsing error");
+        }
+
         if (DETAILDEBUG) {
             System.out.println("\nGlobal symbol table:");
             System.out.println(this.globalSymbolTable);
             System.out.println("Local decs list (should be empty):");
             System.out.println(this.localDeclarations);
         }
+    }
+
+    protected BPLParseTreeNode getTree() {
+        return this.tree;
     }
 
     private void typeCheck(BPLParseTreeNode tree) throws BPLTypeCheckerException{
@@ -627,8 +638,7 @@ public class BPLTypeChecker {
         return s;
     }
 
-    public static void main(String args[])
-            throws BPLTypeCheckerException, BPLParserException {
+    public static void main(String args[]) throws BPLTypeCheckerException {
         String fileName = args[0];
         BPLTypeChecker typeChecker = new BPLTypeChecker(fileName, true, false);
     }

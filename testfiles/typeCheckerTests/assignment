@@ -1,3 +1,6 @@
+string meow;
+int mm;
+
 void main(void) {
     int i;
     string s;

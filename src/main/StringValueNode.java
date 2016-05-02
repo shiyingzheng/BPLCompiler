@@ -6,6 +6,10 @@ public class StringValueNode extends BPLParseTreeNode {
         this.value = value;
     }
 
+    public String getValue() {
+        return this.value;
+    }
+
     @Override
     public String toString(){
         return "Line " + this.getLineNumber()

@@ -48,15 +48,17 @@ public class BPLParser {
     private BPLParseTreeNode declarationList() throws BPLParserException {
         BPLParseTreeNode declaration = this.declaration();
         BPLParseTreeNode list = null;
-
         if (this.hasNextToken()){
             list = new BPLParseTreeNode("DECLARATION_LIST",
                 2, declaration.getLineNumber());
-            list.setChild(0, declaration);
             list.setChild(1, this.declarationList());
-            return list;
         }
-        return declaration;
+        else {
+            list = new BPLParseTreeNode("DECLARATION_LIST",
+                1, declaration.getLineNumber());
+        }
+        list.setChild(0, declaration);
+        return list;
     }
 
     private BPLParseTreeNode declaration() throws BPLParserException {

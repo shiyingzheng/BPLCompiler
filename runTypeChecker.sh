@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# a shellscript to run tests.
+# a shellscript to run the type checker.
 # usage: ./runTypeChecker.sh testfile
 if [ $# -lt 1 ] # if there are fewer than 1 argument
 then
