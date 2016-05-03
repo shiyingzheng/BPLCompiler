@@ -38,7 +38,7 @@ public class BPLCodeGen {
     }
 
     private void generateDataStrings(BPLParseTreeNode t) {
-        if (t.isType("<string>")) {
+        if (t.isNodeType("<string>")) {
             String value = ((StringValueNode)t).getValue();
             this.output(".String" + this.stringNumber + ": .string \""
                 +  value + "\"");
@@ -60,12 +60,12 @@ public class BPLCodeGen {
             this.position++;
         }
         else {
-            if (t.isType("PARAM_LIST")) {
+            if (t.isNodeType("PARAM_LIST")) {
                 this.position = 0;
                 this.assignDepthParamList(t);
                 return;
             }
-            else if (t.isType("COMPOUND_STATEMENT")) {
+            else if (t.isNodeType("COMPOUND_STATEMENT")) {
                 if (depth == 0) {
                     depth = 1;
                 }
@@ -91,15 +91,15 @@ public class BPLCodeGen {
     }
 
     private void generateDeclarations(BPLParseTreeNode t) {
-        if (t.isType("PROGRAM")){
+        if (t.isNodeType("PROGRAM")){
             this.generateDeclarations(t.getChild(0));
         }
-        else if (t.isType("DECLARATION_LIST")) {
+        else if (t.isNodeType("DECLARATION_LIST")) {
             for (int i = 0; i < t.numChildren(); i++) {
                 this.generateDeclarations(t.getChild(i));
             }
         }
-        else if (t.isType("FUNCTION")) {
+        else if (t.isNodeType("FUNCTION")) {
             this.generateFunction(t);
         }
         else {
@@ -108,7 +108,7 @@ public class BPLCodeGen {
     }
 
     private void generateGlobalVar(BPLParseTreeNode t) {
-        if (t.isType("ARRAY_VARIABLE_DECLARATION")) {
+        if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")) {
             this.output(".comm " + ((IdNode)t.getChild(1)).getId() + ", " +
                 8*((IntValueNode)t.getChild(2)).getValue() + ", 32");
         }
@@ -120,14 +120,79 @@ public class BPLCodeGen {
 
     private void generateFunction(BPLParseTreeNode t) {
         this.output(((IdNode)t.getChild(1)).getId() + ": ");
+        // do stuff with params
+        this.generateCompound(t.getChild(3));
         this.output();
     }
 
-    private void generateStatement() {
+    private void generateCompound(BPLParseTreeNode t) {
+        // do stuff with local decs
+        this.generateStmtList(t.getChild(1));
+    }
+
+    private void generateStmtList(BPLParseTreeNode t) {
+        if (t.isNodeType("STATEMENT_LIST")) {
+            for (int i = 0; i < t.numChildren(); i++) {
+                this.generateStmtList(t.getChild(i));
+            }
+        }
+        else {
+            this.generateStmt(t);
+        }
+    }
+
+    private void generateStmt(BPLParseTreeNode t) {
+        if (t.isNodeType("EXPRESSION_STMT")) {
+            this.generateExpressionStmt(t);
+        }
+        else if (t.isNodeType("COMPOUND_STATEMENT")) {
+            this.generateCompound(t);
+        }
+        else if (t.isNodeType("IF_STATEMENT")){
+            this.generateIf(t);
+        }
+        else if (t.isNodeType("WHILE_STATEMENT")){
+            this.generateWhile(t);
+        }
+        else if (t.isNodeType("RETURN_STATEMENT")) {
+            this.generateReturn(t);
+        }
+        else if (t.isNodeType("WRITE_STATEMENT")) {
+            this.generateWrite(t);
+        }
+        else if (t.isNodeType("WRITELN_STATEMENT")) {
+            this.generateWriteln(t);
+        }
+    }
+
+    private void generateExpressionStmt(BPLParseTreeNode t) {
 
     }
 
-    private void generateExpression() {
+    private void generateExpression(BPLParseTreeNode t) {
+
+    }
+
+    private void generateIf(BPLParseTreeNode t) {
+
+    }
+
+    private void generateWhile(BPLParseTreeNode t){
+
+    }
+
+    private void generateReturn(BPLParseTreeNode t) {
+
+    }
+
+    private void generateWriteln(BPLParseTreeNode t) {
+        this.output("\t# writeln");
+        this.output("\tmovl $0, %eax");
+        this.output("\tmovq $.WritelnString, %rdi");
+        this.output("\tcall printf");
+    }
+
+    private void generateWrite(BPLParseTreeNode t) {
 
     }
 

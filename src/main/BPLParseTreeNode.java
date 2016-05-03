@@ -3,6 +3,7 @@ public class BPLParseTreeNode {
     private BPLParseTreeNode[] children;
     private String nodeType;
     private BPLParseTreeNode declaration;
+    private String expType;
 
     public BPLParseTreeNode(String nodeType, int numChildren, int lineNum){
         this.nodeType = nodeType;
@@ -16,8 +17,20 @@ public class BPLParseTreeNode {
         return this.nodeType;
     }
 
-    public boolean isType(String type) {
+    public boolean isNodeType(String type) {
         return this.nodeType.equals(type);
+    }
+
+    public String getExpType() {
+        return this.expType;
+    }
+
+    public boolean isExpType(String type) {
+        return this.expType.equals(type);
+    }
+
+    public void setExpType(String type) {
+        this.expType = type;
     }
 
     public int getLineNumber(){
@@ -33,11 +46,11 @@ public class BPLParseTreeNode {
     }
 
     public String getName() {
-        if (this.isType("<id>")){
+        if (this.isNodeType("<id>")){
             return ((IdNode)this).getId();
         }
         for (int i = 0; i < this.children.length; i++) {
-            if (this.children[i].isType("<id>")) {
+            if (this.children[i].isNodeType("<id>")) {
                 return ((IdNode)this.children[i]).getId();
             }
         }
