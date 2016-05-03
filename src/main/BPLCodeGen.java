@@ -233,7 +233,7 @@ public class BPLCodeGen {
     }
 
     private void output(String str, String comment) {
-        this.output(str + " \t# " + comment);
+        System.out.println(str + " \t# " + comment);
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException{
