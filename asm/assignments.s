@@ -2,6 +2,7 @@
 .WriteIntString: .string "%d"
 .WriteStrString: .string "%s"
 .WritelnString: .string "\n"
+.WriteHiBobString: .string "Hi Bob!"
 .String0: .string "meow"
 .String1: .string "haha"
 .text

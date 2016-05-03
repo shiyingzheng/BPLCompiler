@@ -27,6 +27,7 @@ public class BPLCodeGen {
         this.output(".WriteIntString: .string \"%d\"");
         this.output(".WriteStrString: .string \"%s\"");
         this.output(".WritelnString: .string \"\\n\"");
+        this.output(".WriteHiBobString: .string \"Hi Bob!\""); // important
         this.generateDataStrings(this.parseTree);
     }
 
@@ -170,7 +171,13 @@ public class BPLCodeGen {
     }
 
     private void generateExpression(BPLParseTreeNode t) {
-
+        // TODO
+        if (t.isExpType("INT")){
+            this.output("\tmovl $12, %eax \t# placeholder for expression eval");
+        }
+        else {
+            // ???
+        }
     }
 
     private void generateIf(BPLParseTreeNode t) {
@@ -193,7 +200,26 @@ public class BPLCodeGen {
     }
 
     private void generateWrite(BPLParseTreeNode t) {
-
+        BPLParseTreeNode exp = t.getChild(0);
+        if (exp.isExpType("INT")) {
+            this.generateExpression(exp);
+            this.output();
+            this.output("\tmovl %eax, %esi \t# write int");
+            this.output("\tmovq $.WriteIntString, %rdi");
+        }
+        else if (exp.isExpType("STRING")) {
+            while (!exp.isNodeType("<string>")) {
+                exp = exp.getChild(0);
+            }
+            String n = this.stringTable.get(((StringValueNode)exp).getValue());
+            this.output();
+            this.output("\tmovq " + n + ", %rdi \t# write string");
+        }
+        else {
+            //TODO, arr, ptr
+        }
+        this.output("\tmovl $0, %eax");
+        this.output("\tcall printf");
     }
 
     private void output() {
