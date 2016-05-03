@@ -34,7 +34,6 @@ public class BPLCodeGen {
     private void generateTextSection() {
         this.output(".text");
         this.output(".globl main");
-        this.output();
         this.generateDeclarations(this.parseTree);
     }
 
@@ -116,14 +115,14 @@ public class BPLCodeGen {
         else {
             this.output(".comm " + ((IdNode)t.getChild(1)).getId() + ", 8, 32");
         }
-        this.output();
     }
 
     private void generateFunction(BPLParseTreeNode t) {
+        this.output();
         this.output(((IdNode)t.getChild(1)).getId() + ": ");
         // do stuff with params
         this.generateCompound(t.getChild(3));
-        this.output();
+        this.output("ret");
     }
 
     private void generateCompound(BPLParseTreeNode t) {
@@ -173,7 +172,7 @@ public class BPLCodeGen {
     private void generateExpression(BPLParseTreeNode t) {
         // TODO
         if (t.isExpType("INT")){
-            this.output("\tmovl $12, %eax \t# placeholder for expression eval");
+            this.output("movl $12, %eax", "placeholder for expression eval");
         }
         else {
             // ???
@@ -193,10 +192,9 @@ public class BPLCodeGen {
     }
 
     private void generateWriteln(BPLParseTreeNode t) {
-        this.output("\t# writeln");
-        this.output("\tmovl $0, %eax");
-        this.output("\tmovq $.WritelnString, %rdi");
-        this.output("\tcall printf");
+        this.output("movl $0, %eax", "writeln");
+        this.output("movq $.WritelnString, %rdi");
+        this.output("call printf");
     }
 
     private void generateWrite(BPLParseTreeNode t) {
@@ -204,8 +202,8 @@ public class BPLCodeGen {
         if (exp.isExpType("INT")) {
             this.generateExpression(exp);
             this.output();
-            this.output("\tmovl %eax, %esi \t# write int");
-            this.output("\tmovq $.WriteIntString, %rdi");
+            this.output("movl %eax, %esi", "write int");
+            this.output("movq $.WriteIntString, %rdi");
         }
         else if (exp.isExpType("STRING")) {
             while (!exp.isNodeType("<string>")) {
@@ -213,23 +211,29 @@ public class BPLCodeGen {
             }
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
             this.output();
-            this.output("\tmovq " + n + ", %rdi \t# write string");
+            this.output("movq " + n + ", %rdi", "write string");
         }
         else {
             //TODO, arr, ptr
         }
-        this.output("\tmovl $0, %eax");
-        this.output("\tcall printf");
+        this.output("movl $0, %eax");
+        this.output("call printf");
     }
 
     private void output() {
-        // for now just print to standard out
         System.out.println();
     }
 
     private void output(String str) {
-        // for now just print to standard out
+        if (!(str.charAt(0) == '.'
+                || (str.length() > 1 && str.charAt(str.length()-2) == ':'))) {
+            str = "\t" + str;
+        }
         System.out.println(str);
+    }
+
+    private void output(String str, String comment) {
+        this.output(str + " \t# " + comment);
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException{
