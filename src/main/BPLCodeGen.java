@@ -231,20 +231,16 @@ public class BPLCodeGen {
     }
 
     private void generateFactor(BPLParseTreeNode t) {
-        if (t.isExpType("INT")){
+        BPLParseTreeNode exp = t.getChild(0);
+        if (exp.isNodeType("<num>")){
             this.output("movl $12, %eax", "placeholder for expression eval");
         }
         else if (t.isExpType("STRING")) {
-            BPLParseTreeNode exp = t.getChild(0);
-            //System.out.println(exp);
-            while (!exp.isNodeType("<string>")) {
-                exp = exp.getChild(0);
-            }
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
             this.output("movq " + n + ", %rax");
         }
-        else if (t.isExpType("read()")) {
-            this.generateReturn(t);
+        else if (exp.isNodeType("read()")) {
+            this.generateRead(exp);
         }
     }
 
@@ -295,15 +291,17 @@ public class BPLCodeGen {
     }
 
     private void generateRead(BPLParseTreeNode t) {
-        //TODO:test
-        this.output("sub $40, %rsp", "read input");
-        this.output("movq %rsp, %rax");
-        this.output("sub $24, %rax");
-        this.output("movq $rax, $rsi");
+        this.output();
+        this.output("subq $40, %rsp", "read input");
+        this.output("movq %rsp, %rsi");
+        this.output("addq $24, %rsi");
         this.output("movq $.ReadIntString, %rdi");
+        this.output("movl $0, %eax");
+        this.output("push %rbx");
         this.output("call scanf");
-        this.output("movl 24(%rsp) %eax");
-        this.output("add $40, %rsp");
+        this.output("pop %rbx");
+        this.output("movq 24(%rsp), %rax");
+        this.output("addq $40, %rsp");
     }
 
     private void output() {
