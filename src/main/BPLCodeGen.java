@@ -25,6 +25,7 @@ public class BPLCodeGen {
         this.output(".WriteIntString: .string \"%d\"");
         this.output(".WriteStrString: .string \"%s\"");
         this.output(".WritelnString: .string \"\\n\"");
+        this.output(".ReadIntString: .string \"%d\"");
         this.output(".WriteHiBobString: .string \"Hi Bob!\""); // important
         this.generateDataStrings(this.parseTree);
     }
@@ -181,22 +182,78 @@ public class BPLCodeGen {
 
     private void generateExpression(BPLParseTreeNode t) {
         if (t.isNodeType("ASSIGNMENT_EXPRESSION")) {
-            //TODO
-            this.output("movl $12, %eax", "placeholder for expression eval");
-            return;
+            this.generateAssignExp(t);
         }
-        // TODO: arr and ptr
+        else {
+            this.generateCompExp(t);
+        }
+    }
+
+    private void generateAssignExp(BPLParseTreeNode t) {
+        //TODO
+        this.output("movl $12, %eax", "placeholder for expression eval");
+    }
+
+    private void generateCompExp(BPLParseTreeNode t) {
+        this.generateE(t.getChild(0));
+        if (t.numChildren() > 1) {
+            //TODO
+        }
+    }
+
+    private void generateE(BPLParseTreeNode t) {
+        if (t.isNodeType("E")) {
+            this.generateT(t.getChild(0));
+            // TODO
+        }
+        else {
+            this.generateT(t);
+        }
+    }
+
+    private void generateT(BPLParseTreeNode t) {
+        if (t.isNodeType("T")) {
+            this.generateF(t.getChild(0));
+            // TODO
+        }
+        else {
+            this.generateF(t);
+        }
+    }
+
+    private void generateF(BPLParseTreeNode t) {
+        if (t.isNodeType("F")) {
+            this.generateFactor(t.getChild(0));
+        }
+        else {
+            //TODO
+        }
+    }
+
+    private void generateFactor(BPLParseTreeNode t) {
         if (t.isExpType("INT")){
             this.output("movl $12, %eax", "placeholder for expression eval");
         }
-        else {
+        else if (t.isExpType("STRING")) {
             BPLParseTreeNode exp = t.getChild(0);
+            //System.out.println(exp);
             while (!exp.isNodeType("<string>")) {
                 exp = exp.getChild(0);
             }
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
             this.output("movq " + n + ", %rax");
         }
+        else if (t.isExpType("read()")) {
+            this.generateReturn(t);
+        }
+    }
+
+    private void generateFunCall(BPLParseTreeNode t) {
+
+    }
+
+    private void generateArgs(BPLParseTreeNode t) {
+
     }
 
     private void generateIf(BPLParseTreeNode t) {
@@ -235,6 +292,18 @@ public class BPLCodeGen {
         }
         this.output("movl $0, %eax");
         this.output("call printf");
+    }
+
+    private void generateRead(BPLParseTreeNode t) {
+        //TODO:test
+        this.output("sub $40, %rsp", "read input");
+        this.output("movq %rsp, %rax");
+        this.output("sub $24, %rax");
+        this.output("movq $rax, $rsi");
+        this.output("movq $.ReadIntString, %rdi");
+        this.output("call scanf");
+        this.output("movl 24(%rsp) %eax");
+        this.output("add $40, %rsp");
     }
 
     private void output() {

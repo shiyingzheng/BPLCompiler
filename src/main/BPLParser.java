@@ -537,26 +537,25 @@ public class BPLParser {
     private BPLParseTreeNode f() throws BPLParserException {
         Token t = this.getNextToken();
         int lineNum = t.getLineNumber();
+        BPLParseTreeNode f = null;
 
         if (t.isType(Token.T_MINUS)){
-            BPLParseTreeNode f = new BPLParseTreeNode("F", 2, lineNum);
-            f.setChild(0, new BPLParseTreeNode("-", 0, lineNum));
-            f.setChild(1, this.f());
-            return f;
+            f = new BPLParseTreeNode("NEG_F", 1, lineNum);
+            f.setChild(0, this.f());
         }
         else if (t.isType(Token.T_AMP)) {
-            BPLParseTreeNode f = new BPLParseTreeNode("REF_F", 1, lineNum);
+            f = new BPLParseTreeNode("REF_F", 1, lineNum);
             f.setChild(0, this.factor());
-            return f;
         }
         else if (t.isType(Token.T_MULT)) {
-            BPLParseTreeNode f = new BPLParseTreeNode("DEREF_F", 1, lineNum);
+            f = new BPLParseTreeNode("DEREF_F", 1, lineNum);
             f.setChild(0, this.factor());
-            return f;
         }
-        this.cacheToken(t);
-        BPLParseTreeNode f = new BPLParseTreeNode("F", 1, lineNum);
-        f.setChild(0, this.factor());
+        else{
+            this.cacheToken(t);
+            f = new BPLParseTreeNode("F", 1, lineNum);
+            f.setChild(0, this.factor());
+        }
         return f;
     }
 

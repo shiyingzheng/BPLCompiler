@@ -427,6 +427,7 @@ public class BPLTypeChecker {
                 treeType = this.checkExpression(child);
             }
         }
+        tree.setExpType(treeType);
         return treeType;
     }
 
