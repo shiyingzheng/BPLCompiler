@@ -15,4 +15,7 @@ void main(void) {
     B[1] = s;
     *meow = 5;
     *str = "haha";
+    {int b;}
+    {int c;}
+    ;
 }

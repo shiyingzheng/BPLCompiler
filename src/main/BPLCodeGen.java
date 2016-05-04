@@ -5,20 +5,18 @@ public class BPLCodeGen {
     private BPLParseTreeNode parseTree;
     private HashMap<String, String> stringTable;
     private int stringNumber;
-    private int position;
 
     public BPLCodeGen(String fileName) throws BPLTypeCheckerException {
         BPLTypeChecker typeChecker = new BPLTypeChecker(fileName, false, false);
         this.stringTable = new HashMap<String, String>();
         this.stringNumber = 0;
-        this.position = 0;
         this.parseTree = typeChecker.getTree();
         this.generateCode();
     }
 
     private void generateCode() {
         this.generateDataSection();
-        this.assignDepth(this.parseTree, 0);
+        this.assignDepth(this.parseTree, 0, 0);
         this.generateTextSection();
     }
 
@@ -52,42 +50,54 @@ public class BPLCodeGen {
         }
     }
 
-    private void assignDepth(BPLParseTreeNode t, int depth) {
-        if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
-            ((IdNode)t.getChild(1)).setDepth(depth);
-            ((IdNode)t.getChild(1)).setPosition(position);
-            //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + this.position);
-            this.position++;
+    private Integer assignDepth(BPLParseTreeNode t, int depth, int pos) {
+        if (t.isNodeType("PARAM_LIST")) {
+            this.assignDepthParamList(t, 0);
+            return null;
         }
-        else {
-            if (t.isNodeType("PARAM_LIST")) {
-                this.position = 0;
-                this.assignDepthParamList(t);
-                return;
+        if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
+            this.assignDepthVar(t, depth, pos);
+            return pos+1;
+        }
+
+        if (t.isNodeType("FUNCTION")) {
+            pos = 0;
+        }
+        else if (t.isNodeType("COMPOUND_STATEMENT")) {
+            if (depth == 0) {
+                depth = 2;
             }
-            else if (t.isNodeType("COMPOUND_STATEMENT")) {
-                if (depth == 0) {
-                    depth = 1;
-                }
+            else{
                 depth++;
-                this.position = 0;
             }
-            for (int i = 0; i < t.numChildren(); i++){
-                this.assignDepth(t.getChild(i), depth);
+        }
+
+        for (int i = 0; i < t.numChildren(); i++){
+            Integer p = this.assignDepth(t.getChild(i), depth, pos);
+            if (p != null) {
+                pos = p;
             }
+        }
+
+        if (t.isNodeType("FUNCTION") || t.isNodeType("COMPOUND_STATEMENT")) {
+            return null;
+        }
+        return pos;
+    }
+
+    private void assignDepthParamList(BPLParseTreeNode t, int pos) {
+        BPLParseTreeNode param = t.getChild(0);
+        BPLParseTreeNode rest = t.getChild(1);
+        this.assignDepthVar(param, 1, pos);
+        if (!rest.isEmpty()) {
+            this.assignDepthParamList(rest, pos++);
         }
     }
 
-    private void assignDepthParamList(BPLParseTreeNode t) {
-        BPLParseTreeNode param = t.getChild(0);
-        BPLParseTreeNode rest = t.getChild(1);
-        ((IdNode)param.getChild(1)).setDepth(1);
-        ((IdNode)param.getChild(1)).setPosition(position);
-        //System.out.println(((IdNode)param.getChild(1)).getId() + " " + 1 + " " + this.position);
-        position++;
-        if (!rest.isEmpty()) {
-            this.assignDepthParamList(rest);
-        }
+    private void assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
+        ((IdNode)t.getChild(1)).setDepth(depth);
+        ((IdNode)t.getChild(1)).setPosition(pos);
+        //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
     }
 
     private void generateDeclarations(BPLParseTreeNode t) {
@@ -166,16 +176,26 @@ public class BPLCodeGen {
     }
 
     private void generateExpressionStmt(BPLParseTreeNode t) {
-
+        this.generateExpression(t.getChild(0));
     }
 
     private void generateExpression(BPLParseTreeNode t) {
-        // TODO
+        if (t.isNodeType("ASSIGNMENT_EXPRESSION")) {
+            //TODO
+            this.output("movl $12, %eax", "placeholder for expression eval");
+            return;
+        }
+        // TODO: arr and ptr
         if (t.isExpType("INT")){
             this.output("movl $12, %eax", "placeholder for expression eval");
         }
         else {
-            // ???
+            BPLParseTreeNode exp = t.getChild(0);
+            while (!exp.isNodeType("<string>")) {
+                exp = exp.getChild(0);
+            }
+            String n = this.stringTable.get(((StringValueNode)exp).getValue());
+            this.output("movq " + n + ", %rax");
         }
     }
 
@@ -199,19 +219,16 @@ public class BPLCodeGen {
 
     private void generateWrite(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
+        this.generateExpression(exp);
         if (exp.isExpType("INT")) {
-            this.generateExpression(exp);
             this.output();
             this.output("movl %eax, %esi", "write int");
             this.output("movq $.WriteIntString, %rdi");
         }
         else if (exp.isExpType("STRING")) {
-            while (!exp.isNodeType("<string>")) {
-                exp = exp.getChild(0);
-            }
-            String n = this.stringTable.get(((StringValueNode)exp).getValue());
             this.output();
-            this.output("movq " + n + ", %rdi", "write string");
+            this.output("movq %rax, %rsi", "write string");
+            this.output("movq $.WriteStrString, %rdi");
         }
         else {
             //TODO, arr, ptr
@@ -233,7 +250,7 @@ public class BPLCodeGen {
     }
 
     private void output(String str, String comment) {
-        System.out.println(str + " \t# " + comment);
+        this.output(str + " \t# " + comment);
     }
 
     public static void main(String args[]) throws BPLTypeCheckerException{

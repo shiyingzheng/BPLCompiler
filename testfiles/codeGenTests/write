@@ -1,4 +1,5 @@
 void main(void) {
     write(5);
     write("haha");
+    ;
 }
