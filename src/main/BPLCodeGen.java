@@ -5,11 +5,13 @@ public class BPLCodeGen {
     private BPLParseTreeNode parseTree;
     private HashMap<String, String> stringTable;
     private int stringNumber;
+    private int labelNumber;
 
     public BPLCodeGen(String fileName) throws BPLTypeCheckerException {
         BPLTypeChecker typeChecker = new BPLTypeChecker(fileName, false, false);
         this.stringTable = new HashMap<String, String>();
         this.stringNumber = 0;
+        this.labelNumber = 0;
         this.parseTree = typeChecker.getTree();
         this.generateCode();
     }
@@ -96,8 +98,12 @@ public class BPLCodeGen {
     }
 
     private void assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
-        ((IdNode)t.getChild(1)).setDepth(depth);
-        ((IdNode)t.getChild(1)).setPosition(pos);
+        IdNode id = (IdNode)t.getChild(1);
+        id.setDepth(depth);
+        if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")){
+            pos += ((IntValueNode)t.getChild(2)).getValue() - 1;
+        }
+        id.setPosition(pos);
         //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
     }
 
@@ -196,15 +202,44 @@ public class BPLCodeGen {
 
     private void generateCompExp(BPLParseTreeNode t) {
         this.generateE(t.getChild(0));
-        if (t.numChildren() > 1) {
-            //TODO
+        if (t.numChildren() == 1) {
+            return;
         }
+        this.output("push %rax", "comparison");
+        this.generateE(t.getChild(2));
+        String op = t.getChild(1).getNodeType();
+        if (op.equals("<=")) {
+            op = "jl";
+        }
+        else if (op.equals("<")) {
+            op = "jle";
+        }
+        else if (op.equals("==")) {
+            op = "je";
+        }
+        else if (op.equals("!=")) {
+            op = "jne";
+        }
+        else if (op.equals(">=")) {
+            op = "jg";
+        }
+        else if (op.equals(">")) {
+            op = "jge";
+        }
+        int label = this.getLabelNumber();
+        this.output("cmpl %eax, 0(%rsp)");
+        this.output(op + " Label" + label);
+        this.output("movl $0, %eax");
+        this.output("jmp Label" + this.getLabelNumber());
+        this.output("Label" + label + ":");
+        this.output("movl $1, %eax");
+        this.output("Label" + (label+1) + ":");
+        this.output("addq $8, %rsp");
     }
 
     private void generateE(BPLParseTreeNode t) {
         if (t.isNodeType("E")) {
             this.generateT(t.getChild(0));
-            // TODO
         }
         else {
             this.generateT(t);
@@ -233,14 +268,19 @@ public class BPLCodeGen {
     private void generateFactor(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
         if (exp.isNodeType("<num>")){
-            this.output("movl $12, %eax", "placeholder for expression eval");
+            int i = ((IntValueNode)exp).getValue();
+            this.output("movl $" + i + ", %eax",
+                "placeholder for expression eval");
         }
-        else if (t.isExpType("STRING")) {
+        else if (exp.isNodeType("<string>")) {
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
             this.output("movq " + n + ", %rax");
         }
         else if (exp.isNodeType("read()")) {
             this.generateRead(exp);
+        }
+        else if (exp.isNodeType("<id>")) {
+
         }
     }
 
@@ -302,6 +342,14 @@ public class BPLCodeGen {
         this.output("pop %rbx");
         this.output("movq 24(%rsp), %rax");
         this.output("addq $40, %rsp");
+    }
+
+    private int getStringNumber() {
+        return this.stringNumber++;
+    }
+
+    private int getLabelNumber() {
+        return this.labelNumber++;
     }
 
     private void output() {
