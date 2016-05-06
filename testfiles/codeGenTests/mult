@@ -1,0 +1,11 @@
+void main(void) {
+    write(5 * 1);
+    write(5 * 2);
+    write(4 * 2);
+    write(5 * (4 * 2));
+    write(6 / 3);
+    write(5 / 3);
+    write(5 % 3);
+    write(16 / (2 * 2));
+    write(16 / (5 % 3));
+}

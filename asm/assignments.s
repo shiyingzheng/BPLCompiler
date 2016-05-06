@@ -12,10 +12,10 @@
 .comm mm, 8, 32
 
 main: 
-	movl $12, %eax 	# placeholder for expression eval
-	movl $12, %eax 	# placeholder for expression eval
-	movl $12, %eax 	# placeholder for expression eval
-	movl $12, %eax 	# placeholder for expression eval
-	movl $12, %eax 	# placeholder for expression eval
-	movl $12, %eax 	# placeholder for expression eval
+	movl $12, %eax 	# placeholder for assignment eval
+	movl $12, %eax 	# placeholder for assignment eval
+	movl $12, %eax 	# placeholder for assignment eval
+	movl $12, %eax 	# placeholder for assignment eval
+	movl $12, %eax 	# placeholder for assignment eval
+	movl $12, %eax 	# placeholder for assignment eval
 	ret

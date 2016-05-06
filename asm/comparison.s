@@ -8,9 +8,9 @@
 .globl main
 
 main: 
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	jle Label0
 	movl $0, %eax
@@ -24,9 +24,9 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	jge Label2
 	movl $0, %eax
@@ -40,9 +40,9 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	jl Label4
 	movl $0, %eax
@@ -56,9 +56,9 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	je Label6
 	movl $0, %eax
@@ -72,9 +72,9 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	jne Label8
 	movl $0, %eax
@@ -88,9 +88,9 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 	push %rax 	# comparison
-	movl $4, %eax 	# placeholder for expression eval
+	movl $4, %eax
 	cmpl %eax, 0(%rsp)
 	jg Label10
 	movl $0, %eax

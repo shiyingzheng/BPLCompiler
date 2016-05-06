@@ -9,7 +9,7 @@
 .globl main
 
 main: 
-	movl $5, %eax 	# placeholder for expression eval
+	movl $5, %eax
 
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi

@@ -197,7 +197,7 @@ public class BPLCodeGen {
 
     private void generateAssignExp(BPLParseTreeNode t) {
         //TODO
-        this.output("movl $12, %eax", "placeholder for expression eval");
+        this.output("movl $12, %eax", "placeholder for assignment eval");
     }
 
     private void generateCompExp(BPLParseTreeNode t) {
@@ -239,7 +239,19 @@ public class BPLCodeGen {
 
     private void generateE(BPLParseTreeNode t) {
         if (t.isNodeType("E")) {
+            this.output();
+            this.generateT(t.getChild(2));
+            this.output("push %rax", "addition/subtraction here");
             this.generateT(t.getChild(0));
+            String op = t.getChild(1).getNodeType();
+            if (op.equals("+")) {
+                op = "addq";
+            }
+            else {
+                op = "subq";
+            }
+            this.output(op + " 0(%rsp), %rax");
+            this.output("addq $8, %rsp");
         }
         else {
             this.generateT(t);
@@ -248,8 +260,25 @@ public class BPLCodeGen {
 
     private void generateT(BPLParseTreeNode t) {
         if (t.isNodeType("T")) {
-            this.generateF(t.getChild(0));
-            // TODO
+            this.output();
+            String op = t.getChild(1).getNodeType();
+            this.generateF(t.getChild(2));
+            if (op.equals("*")) {
+                this.output("push %rax", "multiplication here");
+                this.generateF(t.getChild(0));
+                this.output("imul 0(%rsp) , %eax");
+                this.output("addq $8, %rsp");
+            }
+            else {
+                this.output("movl %eax, %ebp", "division here");
+                this.generateF(t.getChild(0));
+                this.output("cltq");
+                this.output("cqto");
+                this.output("idivl %ebp");
+                if (op.equals("%")) {
+                    this.output("movl %edx, %eax");
+                }
+            }
         }
         else {
             this.generateF(t);
@@ -260,8 +289,14 @@ public class BPLCodeGen {
         if (t.isNodeType("F")) {
             this.generateFactor(t.getChild(0));
         }
-        else {
-            //TODO
+        else if (t.isNodeType("NEG_F")) {
+
+        }
+        else if (t.isNodeType("REF_F")) {
+
+        }
+        else if (t.isNodeType("DEREF_F")) {
+
         }
     }
 
@@ -269,8 +304,7 @@ public class BPLCodeGen {
         BPLParseTreeNode exp = t.getChild(0);
         if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
-            this.output("movl $" + i + ", %eax",
-                "placeholder for expression eval");
+            this.output("movl $" + i + ", %eax");
         }
         else if (exp.isNodeType("<string>")) {
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
@@ -280,6 +314,12 @@ public class BPLCodeGen {
             this.generateRead(exp);
         }
         else if (exp.isNodeType("<id>")) {
+
+        }
+        else if (exp.isNodeType("COMP_EXPRESSION")) {
+            this.generateCompExp(exp);
+        }
+        else if (exp.isNodeType("ASSIGNMENT_EXPRESSION")) {
 
         }
     }

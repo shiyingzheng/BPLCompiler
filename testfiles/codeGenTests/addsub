@@ -1,0 +1,7 @@
+void main(void) {
+    write(5 + 1);
+    write(5 - 1);
+    write(4 - 2);
+    write(5 - (4 - 2));
+    write(5 - (4 + 2));
+}
