@@ -11,7 +11,7 @@
 .comm meow, 8, 32
 .comm mm, 8, 32
 
-main: 
+main:
 	movl $12, %eax 	# placeholder for assignment eval
 	movl $12, %eax 	# placeholder for assignment eval
 	movl $12, %eax 	# placeholder for assignment eval

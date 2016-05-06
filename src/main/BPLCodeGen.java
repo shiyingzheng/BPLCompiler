@@ -136,7 +136,7 @@ public class BPLCodeGen {
 
     private void generateFunction(BPLParseTreeNode t) {
         this.output();
-        this.output(((IdNode)t.getChild(1)).getId() + ": ");
+        this.output(((IdNode)t.getChild(1)).getId() + ":");
         // do stuff with params
         this.generateCompound(t.getChild(3));
         this.output("ret");
@@ -239,7 +239,6 @@ public class BPLCodeGen {
 
     private void generateE(BPLParseTreeNode t) {
         if (t.isNodeType("E")) {
-            this.output();
             this.generateT(t.getChild(2));
             this.output("push %rax", "addition/subtraction here");
             this.generateT(t.getChild(0));
@@ -260,7 +259,6 @@ public class BPLCodeGen {
 
     private void generateT(BPLParseTreeNode t) {
         if (t.isNodeType("T")) {
-            this.output();
             String op = t.getChild(1).getNodeType();
             this.generateF(t.getChild(2));
             if (op.equals("*")) {
@@ -333,11 +331,27 @@ public class BPLCodeGen {
     }
 
     private void generateIf(BPLParseTreeNode t) {
-
+        this.generateExpression(t.getChild(0));
+        this.output("cmpl $0, %eax", "if statement");
+        int label = this.getLabelNumber();
+        this.output("je Label" + label);
+        this.generateStmt(t.getChild(1));
+        this.output("Label" + label + ":");
+        if (t.numChildren() > 2) {
+            this.generateStmt(t.getChild(2));
+        }
     }
 
     private void generateWhile(BPLParseTreeNode t){
-
+        //TODO test when variables are implemented
+        this.output("Label" + this.getLabelNumber() + ":");
+        this.generateExpression(t.getChild(0));
+        this.output("cmpl $0, %eax", "while statement");
+        int label = this.getLabelNumber();
+        this.output("je Label" + label);
+        this.generateStmt(t.getChild(1));
+        this.output("jmp Label" + (label - 1));
+        this.output("Label" + label + ":");
     }
 
     private void generateReturn(BPLParseTreeNode t) {
@@ -354,12 +368,10 @@ public class BPLCodeGen {
         BPLParseTreeNode exp = t.getChild(0);
         this.generateExpression(exp);
         if (exp.isExpType("INT")) {
-            this.output();
             this.output("movl %eax, %esi", "write int");
             this.output("movq $.WriteIntString, %rdi");
         }
         else if (exp.isExpType("STRING")) {
-            this.output();
             this.output("movq %rax, %rsi", "write string");
             this.output("movq $.WriteStrString, %rdi");
         }
@@ -371,7 +383,6 @@ public class BPLCodeGen {
     }
 
     private void generateRead(BPLParseTreeNode t) {
-        this.output();
         this.output("subq $40, %rsp", "read input");
         this.output("movq %rsp, %rsi");
         this.output("addq $24, %rsi");
@@ -398,7 +409,7 @@ public class BPLCodeGen {
 
     private void output(String str) {
         if (!(str.charAt(0) == '.'
-                || (str.length() > 1 && str.charAt(str.length()-2) == ':'))) {
+                || (str.length() > 1 && str.charAt(str.length()-1) == ':'))) {
             str = "\t" + str;
         }
         System.out.println(str);

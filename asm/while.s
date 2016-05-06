@@ -4,21 +4,11 @@
 .WritelnString: .string "\n"
 .ReadIntString: .string "%d"
 .WriteHiBobString: .string "Hi Bob!"
-.String0: .string "haha"
 .text
 .globl main
 
 main:
-	movl $5, %eax
-	movl %eax, %esi 	# write int
-	movq $.WriteIntString, %rdi
-	movl $0, %eax
-	call printf
-	movq $.String0, %rax
-	movq %rax, %rsi 	# write string
-	movq $.WriteStrString, %rdi
-	movl $0, %eax
-	call printf
+Label0:
 	subq $40, %rsp 	# read input
 	movq %rsp, %rsi
 	addq $24, %rsi
@@ -29,8 +19,13 @@ main:
 	pop %rbx
 	movq 24(%rsp), %rax
 	addq $40, %rsp
+	cmpl $0, %eax 	# while statement
+	je Label1
+	movl $5, %eax
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
+	jmp Label0
+Label1:
 	ret

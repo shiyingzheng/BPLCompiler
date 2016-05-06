@@ -1,0 +1,19 @@
+void main(void) {
+    if(5 > 4) {
+        write(5);
+    }
+    if (4 > 5) {
+        write("meow");
+    }
+    else{
+        write("ruff");
+    }
+    if (5 > 4) {
+        if (5 != 5){
+            write("huh");
+        }
+        else {
+            write("pewpew");
+        }
+    }
+}

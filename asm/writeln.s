@@ -7,7 +7,7 @@
 .text
 .globl main
 
-main: 
+main:
 	movl $0, %eax 	# writeln
 	movq $.WritelnString, %rdi
 	call printf

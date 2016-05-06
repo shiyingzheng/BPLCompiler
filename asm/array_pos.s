@@ -7,5 +7,5 @@
 .text
 .globl main
 
-main: 
+main:
 	ret
