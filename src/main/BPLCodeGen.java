@@ -93,7 +93,7 @@ public class BPLCodeGen {
         BPLParseTreeNode rest = t.getChild(1);
         this.assignDepthVar(param, 1, pos);
         if (!rest.isEmpty()) {
-            this.assignDepthParamList(rest, pos++);
+            this.assignDepthParamList(rest, ++pos);
         }
     }
 
@@ -355,7 +355,7 @@ public class BPLCodeGen {
         BPLParseTreeNode exp = t.getChild(0);
         if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
-            this.output("movl $" + i + ", %eax", "evaluate number");
+            this.output("movq $" + i + ", %rax", "evaluate number");
         }
         else if (exp.isNodeType("<string>")) {
             String n = this.stringTable.get(((StringValueNode)exp).getValue());

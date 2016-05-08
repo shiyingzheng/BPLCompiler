@@ -9,53 +9,53 @@
 
 main:
 	movq %rsp, %rbx
-	movl $1, %eax 	# evaluate number
+	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movl $5, %eax 	# evaluate number
+	movq $5, %rax 	# evaluate number
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $1, %eax 	# evaluate number
+	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movl $5, %eax 	# evaluate number
+	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $2, %eax 	# evaluate number
+	movq $2, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movl $4, %eax 	# evaluate number
+	movq $4, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $2, %eax 	# evaluate number
+	movq $2, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movl $4, %eax 	# evaluate number
+	movq $4, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	push %rax 	# addition/subtraction here
-	movl $5, %eax 	# evaluate number
+	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $2, %eax 	# evaluate number
+	movq $2, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movl $4, %eax 	# evaluate number
+	movq $4, %rax 	# evaluate number
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	push %rax 	# addition/subtraction here
-	movl $5, %eax 	# evaluate number
+	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	movl %eax, %esi 	# write int

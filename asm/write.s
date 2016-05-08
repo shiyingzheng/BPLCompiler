@@ -10,7 +10,7 @@
 
 main:
 	movq %rsp, %rbx
-	movl $5, %eax 	# evaluate number
+	movq $5, %rax 	# evaluate number
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax

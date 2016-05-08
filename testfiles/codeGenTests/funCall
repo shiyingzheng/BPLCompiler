@@ -10,23 +10,30 @@ void h(void) {
     }
 }
 
-int f(int x) {
+int f(int x, int y) {
     h();
+    write(x);
+    write(y);
     write(5 + 7 + x);
-    return 5 + 7 + x;
+    write(5 + 7 + x + y);
+    write(x * y * 2);
+    return 5 + 7 + x + y;
 }
 
 void main(void) {
     int x;
+    int w;
     int A[5];
     x = 512;
     y = 55;
+    w = 55;
     z = "pewpew";
     A[0] = 3;
     write(-x);
     write(y);
     write(z);
-    write(f(x));
-    write(5 + 7 + 512);
-    write(3 * 8 * 9);
+    write(f(x, y));
+    write(f(x, w));
+    write(5 + 7 + 512 + 55);
+    write(3 * 8 * 9 * 2);
 }
