@@ -18,7 +18,7 @@ public class BPLCodeGen {
 
     private void generateCode() {
         this.generateDataSection();
-        this.assignDepth(this.parseTree, 0);
+        this.assignDepth(this.parseTree, 0, 0);
         this.generateTextSection();
     }
 
@@ -53,18 +53,20 @@ public class BPLCodeGen {
         }
     }
 
-    private void assignDepth(BPLParseTreeNode t, int depth) {
+    private Integer assignDepth(BPLParseTreeNode t, int depth, int pos) {
         if (t.isNodeType("PARAM_LIST")) {
-            this.assignDepthParamList(t);
-            return;
+            this.assignDepthParamList(t, 0);
+            return null;
         }
-
         if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
-            this.assignDepthVar(t, depth);
-            return;
+            this.assignDepthVar(t, depth, pos);
+            return pos+1;
         }
 
-        if (t.isNodeType("COMPOUND_STATEMENT")) {
+        if (t.isNodeType("FUNCTION")) {
+            pos = 0;
+        }
+        else if (t.isNodeType("COMPOUND_STATEMENT")) {
             if (depth == 0) {
                 depth = 2;
             }
@@ -74,23 +76,35 @@ public class BPLCodeGen {
         }
 
         for (int i = 0; i < t.numChildren(); i++){
-            this.assignDepth(t.getChild(i), depth);
+            Integer p = this.assignDepth(t.getChild(i), depth, pos);
+            if (p != null) {
+                pos = p;
+            }
         }
+
+        if (t.isNodeType("FUNCTION") || t.isNodeType("COMPOUND_STATEMENT")) {
+            return null;
+        }
+        return pos;
     }
 
-    private void assignDepthParamList(BPLParseTreeNode t) {
+    private void assignDepthParamList(BPLParseTreeNode t, int pos) {
         BPLParseTreeNode param = t.getChild(0);
         BPLParseTreeNode rest = t.getChild(1);
-        this.assignDepthVar(param, 1);
+        this.assignDepthVar(param, 1, pos);
         if (!rest.isEmpty()) {
-            this.assignDepthParamList(rest);
+            this.assignDepthParamList(rest, pos++);
         }
     }
 
-    private void assignDepthVar(BPLParseTreeNode t, int depth) {
+    private void assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
         IdNode id = (IdNode)t.getChild(1);
         id.setDepth(depth);
-        System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth);
+        if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")){
+            pos += ((IntValueNode)t.getChild(2)).getValue() - 1;
+        }
+        id.setPosition(pos);
+        //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
     }
 
     private void generateDeclarations(BPLParseTreeNode t) {
@@ -124,14 +138,14 @@ public class BPLCodeGen {
         this.output();
         this.output(t.getChild(1).getName() + ":");
         this.output("movq %rsp, %rbx");
+        // allocate space for max position local decs
         this.generateCompound(t.getChild(3));
+        // deallocate space for local decs
         this.output("ret");
     }
 
     private void generateCompound(BPLParseTreeNode t) {
-        // put local decs on stack
         this.generateStmtList(t.getChild(1));
-        // take off local decs from stack
     }
 
     private void generateStmtList(BPLParseTreeNode t) {

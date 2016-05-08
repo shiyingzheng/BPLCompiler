@@ -4,6 +4,7 @@ public class BPLParseTreeNode {
     private String nodeType;
     private BPLParseTreeNode declaration;
     private String expType;
+    private int funcMaxPos;
 
     public BPLParseTreeNode(String nodeType, int numChildren, int lineNum){
         this.nodeType = nodeType;
@@ -31,6 +32,14 @@ public class BPLParseTreeNode {
 
     public void setExpType(String type) {
         this.expType = type;
+    }
+
+    public void setFuncMaxPos(int pos) {
+        this.funcMaxPos = pos;
+    }
+
+    public int getFuncMaxPos() {
+        return this.funcMaxPos;
     }
 
     public int getLineNumber(){
