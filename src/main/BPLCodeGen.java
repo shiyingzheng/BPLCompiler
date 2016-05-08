@@ -344,16 +344,19 @@ public class BPLCodeGen {
             this.output("neg %eax", "negation");
         }
         else if (t.isNodeType("REF_F")) {
-
+            //TODO
         }
         else if (t.isNodeType("DEREF_F")) {
-
+            //TODO
         }
     }
 
     private void generateFactor(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
-        if (exp.isNodeType("<num>")){
+        if (t.numChildren() > 1) {
+            // array element
+        }
+        else if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
             this.output("movq $" + i + ", %rax", "evaluate number");
         }
@@ -374,7 +377,6 @@ public class BPLCodeGen {
                     "variable " + name);
             }
             else if (id.getDepth() == 1) { // params
-                // TODO: test
                 int offset = 16 + 8 * id.getPosition();
                 this.output("movq " + offset + "(%rbx), %rax",
                     "variable " + name);
@@ -387,7 +389,7 @@ public class BPLCodeGen {
             this.generateCompExp(exp);
         }
         else if (exp.isNodeType("ASSIGNMENT_EXPRESSION")) {
-
+            this.generateAssignExp(exp);
         }
         else if (exp.isNodeType("FUNCTION_CALL")) {
             this.generateFunCall(exp);
@@ -395,12 +397,10 @@ public class BPLCodeGen {
     }
 
     private void generateFunCall(BPLParseTreeNode t) {
-        //push arguments onto stack
         int numArgs = this.pushArgs(t.getChild(1));
         this.output("push %rbx", "Push frame pointer");
         this.output("call " + t.getChild(0).getName(), "Call function");
         this.output("pop %rbx", "Retrieve frame pointer");
-        //remove arguments from stack
         this.output("addq $" + numArgs * 8 + ", %rsp", "remove args");
     }
 
@@ -424,7 +424,7 @@ public class BPLCodeGen {
         else if (exp.isExpType("STRING")) {
             this.output("push %rax", "string argument");
         }
-        // arrays? pointers?
+        // TODO: arrays? pointers?
         return rest + 1;
     }
 
