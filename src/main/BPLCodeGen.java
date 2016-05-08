@@ -18,7 +18,7 @@ public class BPLCodeGen {
 
     private void generateCode() {
         this.generateDataSection();
-        this.assignDepth(this.parseTree, 0, 0);
+        this.assignDepth(this.parseTree, 0);
         this.generateTextSection();
     }
 
@@ -53,20 +53,18 @@ public class BPLCodeGen {
         }
     }
 
-    private Integer assignDepth(BPLParseTreeNode t, int depth, int pos) {
+    private void assignDepth(BPLParseTreeNode t, int depth) {
         if (t.isNodeType("PARAM_LIST")) {
-            this.assignDepthParamList(t, 0);
-            return null;
-        }
-        if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
-            this.assignDepthVar(t, depth, pos);
-            return pos+1;
+            this.assignDepthParamList(t);
+            return;
         }
 
-        if (t.isNodeType("FUNCTION")) {
-            pos = 0;
+        if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
+            this.assignDepthVar(t, depth);
+            return;
         }
-        else if (t.isNodeType("COMPOUND_STATEMENT")) {
+
+        if (t.isNodeType("COMPOUND_STATEMENT")) {
             if (depth == 0) {
                 depth = 2;
             }
@@ -76,35 +74,23 @@ public class BPLCodeGen {
         }
 
         for (int i = 0; i < t.numChildren(); i++){
-            Integer p = this.assignDepth(t.getChild(i), depth, pos);
-            if (p != null) {
-                pos = p;
-            }
+            this.assignDepth(t.getChild(i), depth);
         }
-
-        if (t.isNodeType("FUNCTION") || t.isNodeType("COMPOUND_STATEMENT")) {
-            return null;
-        }
-        return pos;
     }
 
-    private void assignDepthParamList(BPLParseTreeNode t, int pos) {
+    private void assignDepthParamList(BPLParseTreeNode t) {
         BPLParseTreeNode param = t.getChild(0);
         BPLParseTreeNode rest = t.getChild(1);
-        this.assignDepthVar(param, 1, pos);
+        this.assignDepthVar(param, 1);
         if (!rest.isEmpty()) {
-            this.assignDepthParamList(rest, pos++);
+            this.assignDepthParamList(rest);
         }
     }
 
-    private void assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
+    private void assignDepthVar(BPLParseTreeNode t, int depth) {
         IdNode id = (IdNode)t.getChild(1);
         id.setDepth(depth);
-        if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")){
-            pos += ((IntValueNode)t.getChild(2)).getValue() - 1;
-        }
-        id.setPosition(pos);
-        //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
+        System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth);
     }
 
     private void generateDeclarations(BPLParseTreeNode t) {
@@ -126,25 +112,26 @@ public class BPLCodeGen {
 
     private void generateGlobalVar(BPLParseTreeNode t) {
         if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")) {
-            this.output(".comm " + ((IdNode)t.getChild(1)).getId() + ", " +
+            this.output(".comm " + t.getChild(1).getName() + ", " +
                 8*((IntValueNode)t.getChild(2)).getValue() + ", 32");
         }
         else {
-            this.output(".comm " + ((IdNode)t.getChild(1)).getId() + ", 8, 32");
+            this.output(".comm " + t.getChild(1).getName() + ", 8, 32");
         }
     }
 
     private void generateFunction(BPLParseTreeNode t) {
         this.output();
-        this.output(((IdNode)t.getChild(1)).getId() + ":");
-        // do stuff with params
+        this.output(t.getChild(1).getName() + ":");
+        this.output("movq %rsp, %rbx");
         this.generateCompound(t.getChild(3));
         this.output("ret");
     }
 
     private void generateCompound(BPLParseTreeNode t) {
-        // do stuff with local decs
+        // put local decs on stack
         this.generateStmtList(t.getChild(1));
+        // take off local decs from stack
     }
 
     private void generateStmtList(BPLParseTreeNode t) {
@@ -320,10 +307,17 @@ public class BPLCodeGen {
         else if (exp.isNodeType("ASSIGNMENT_EXPRESSION")) {
 
         }
+        else if (exp.isNodeType("FUNCTION_CALL")) {
+            this.generateFunCall(exp);
+        }
     }
 
     private void generateFunCall(BPLParseTreeNode t) {
-
+        //push arguments onto stack
+        this.output("push %rbx", "Push frame pointer");
+        this.output("call " + t.getChild(1).getName(), "Call function");
+        this.output("pop %rbx", "Retrieve frame pointer");
+        //remove arguments from stack
     }
 
     private void generateArgs(BPLParseTreeNode t) {
@@ -408,8 +402,7 @@ public class BPLCodeGen {
     }
 
     private void output(String str) {
-        if (!(str.charAt(0) == '.'
-                || (str.length() > 1 && str.charAt(str.length()-1) == ':'))) {
+        if (!(str.charAt(0) == '.' || str.contains(":"))) {
             str = "\t" + str;
         }
         System.out.println(str);
