@@ -293,7 +293,7 @@ public class BPLCodeGen {
         if (t.isNodeType("E")) {
             this.generateT(t.getChild(2));
             this.output("push %rax", "addition/subtraction here");
-            this.generateT(t.getChild(0));
+            this.generateE(t.getChild(0));
             String op = t.getChild(1).getNodeType();
             if (op.equals("+")) {
                 op = "addq";
@@ -315,13 +315,13 @@ public class BPLCodeGen {
             this.generateF(t.getChild(2));
             if (op.equals("*")) {
                 this.output("push %rax", "multiplication here");
-                this.generateF(t.getChild(0));
+                this.generateT(t.getChild(0));
                 this.output("imul 0(%rsp) , %eax");
                 this.output("addq $8, %rsp");
             }
             else {
                 this.output("movl %eax, %ebp", "division here");
-                this.generateF(t.getChild(0));
+                this.generateT(t.getChild(0));
                 this.output("cltq");
                 this.output("cqto");
                 this.output("idivl %ebp");
@@ -340,7 +340,8 @@ public class BPLCodeGen {
             this.generateFactor(t.getChild(0));
         }
         else if (t.isNodeType("NEG_F")) {
-
+            this.generateF(t.getChild(0));
+            this.output("neg %eax", "negation");
         }
         else if (t.isNodeType("REF_F")) {
 
@@ -354,11 +355,11 @@ public class BPLCodeGen {
         BPLParseTreeNode exp = t.getChild(0);
         if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
-            this.output("movl $" + i + ", %eax");
+            this.output("movl $" + i + ", %eax", "evaluate number");
         }
         else if (exp.isNodeType("<string>")) {
             String n = this.stringTable.get(((StringValueNode)exp).getValue());
-            this.output("movq " + n + ", %rax");
+            this.output("movq " + n + ", %rax", "evaluate string");
         }
         else if (exp.isNodeType("read()")) {
             this.generateRead(exp);
@@ -395,14 +396,36 @@ public class BPLCodeGen {
 
     private void generateFunCall(BPLParseTreeNode t) {
         //push arguments onto stack
+        int numArgs = this.pushArgs(t.getChild(1));
         this.output("push %rbx", "Push frame pointer");
         this.output("call " + t.getChild(0).getName(), "Call function");
         this.output("pop %rbx", "Retrieve frame pointer");
         //remove arguments from stack
+        this.output("addq $" + numArgs * 8 + ", %rsp", "remove args");
     }
 
-    private void generateArgs(BPLParseTreeNode t) {
+    private int pushArgs(BPLParseTreeNode t) {
+        if (t.isEmpty()) {
+            return 0;
+        }
+        return pushArgList(t);
+    }
 
+    private int pushArgList(BPLParseTreeNode t) {
+        int rest = 0;
+        if (!(t.getChild(1).isEmpty())) {
+            rest = this.pushArgList(t.getChild(1));
+        }
+        BPLParseTreeNode exp = t.getChild(0);
+        this.generateExpression(exp);
+        if (exp.isExpType("INT")) {
+            this.output("push %rax", "int argument");
+        }
+        else if (exp.isExpType("STRING")) {
+            this.output("push %rax", "string argument");
+        }
+        // arrays? pointers?
+        return rest + 1;
     }
 
     private void generateIf(BPLParseTreeNode t) {
@@ -430,7 +453,7 @@ public class BPLCodeGen {
     }
 
     private void generateReturn(BPLParseTreeNode t) {
-        this.output("movq %rbx, %rsp");
+        this.output("movq %rbx, %rsp", "return statement");
         if (t.numChildren() > 0) {
             this.generateExpression(t.getChild(0));
         }

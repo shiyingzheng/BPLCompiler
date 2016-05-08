@@ -22,7 +22,7 @@ Label0:
 	addq $40, %rsp
 	cmpl $0, %eax 	# while statement
 	je Label1
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax

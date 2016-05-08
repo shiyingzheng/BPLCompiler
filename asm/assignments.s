@@ -14,11 +14,11 @@
 main:
 	movq %rsp, %rbx
 	subq $56, %rsp 	# Allocate space for local variables
-	movl $0, %eax
+	movl $0, %eax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable i
-	movl $2, %eax
+	movl $2, %eax 	# evaluate number
 	movq %rax, -56(%rbx) 	# assign to variable A
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	movq %rax, -40(%rbx) 	# assign to variable meow
 	addq $56, %rsp 	# Deallocate space for local variables
 	ret

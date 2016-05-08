@@ -10,12 +10,12 @@
 
 main:
 	movq %rsp, %rbx
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movq $.String0, %rax
+	movq $.String0, %rax 	# evaluate string
 	movq %rax, %rsi 	# write string
 	movq $.WriteStrString, %rdi
 	movl $0, %eax

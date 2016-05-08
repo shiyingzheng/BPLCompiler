@@ -9,9 +9,9 @@
 
 main:
 	movq %rsp, %rbx
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	jle Label0
 	movl $0, %eax
@@ -24,9 +24,9 @@ Label1:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	jge Label2
 	movl $0, %eax
@@ -39,9 +39,9 @@ Label3:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	jl Label4
 	movl $0, %eax
@@ -54,9 +54,9 @@ Label5:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	je Label6
 	movl $0, %eax
@@ -69,9 +69,9 @@ Label7:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	jne Label8
 	movl $0, %eax
@@ -84,9 +84,9 @@ Label9:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movl $5, %eax
+	movl $5, %eax 	# evaluate number
 	push %rax 	# comparison
-	movl $4, %eax
+	movl $4, %eax 	# evaluate number
 	cmpl %eax, 0(%rsp)
 	jg Label10
 	movl $0, %eax

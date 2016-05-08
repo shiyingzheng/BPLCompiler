@@ -1,4 +1,5 @@
 int y;
+string z;
 
 void h(void) {
     if (5 > 4) {
@@ -9,16 +10,23 @@ void h(void) {
     }
 }
 
-int f(void) {
+int f(int x) {
     h();
-    return 5 + 7;
+    write(5 + 7 + x);
+    return 5 + 7 + x;
 }
 
 void main(void) {
     int x;
+    int A[5];
     x = 512;
     y = 55;
-    write(x);
+    z = "pewpew";
+    A[0] = 3;
+    write(-x);
     write(y);
-    write(f());
+    write(z);
+    write(f(x));
+    write(5 + 7 + 512);
+    write(3 * 8 * 9);
 }
