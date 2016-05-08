@@ -8,6 +8,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 	movl $0, %eax 	# writeln
 	movq $.WritelnString, %rdi
 	call printf

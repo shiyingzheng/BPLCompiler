@@ -8,6 +8,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 	movl $1, %eax
 	push %rax 	# addition/subtraction here
 	movl $5, %eax

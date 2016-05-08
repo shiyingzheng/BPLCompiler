@@ -12,6 +12,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 	movl $5, %eax
 	push %rax 	# comparison
 	movl $4, %eax

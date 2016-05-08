@@ -1,0 +1,24 @@
+int y;
+
+void h(void) {
+    if (5 > 4) {
+        return;
+    }
+    else {
+        write("bye");
+    }
+}
+
+int f(void) {
+    h();
+    return 5 + 7;
+}
+
+void main(void) {
+    int x;
+    x = 512;
+    y = 55;
+    write(x);
+    write(y);
+    write(f());
+}

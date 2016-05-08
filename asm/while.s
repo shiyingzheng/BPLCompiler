@@ -8,6 +8,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 Label0:
 	subq $40, %rsp 	# read input
 	movq %rsp, %rsi

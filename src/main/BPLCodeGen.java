@@ -107,6 +107,26 @@ public class BPLCodeGen {
         //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
     }
 
+    private Integer findMaxPosition(BPLParseTreeNode t) {
+        if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
+            return ((IdNode)t.getChild(1)).getPosition();
+        }
+        else if (t.numChildren() == 0) {
+            return null;
+        }
+        Integer max = null;
+        for (int i = 0; i < t.numChildren(); i++) {
+            Integer pos = this.findMaxPosition(t.getChild(i));
+            if (max == null) {
+                max = pos;
+            }
+            else if (pos != null && pos > max) {
+                max = pos;
+            }
+        }
+        return max;
+    }
+
     private void generateDeclarations(BPLParseTreeNode t) {
         if (t.isNodeType("PROGRAM")){
             this.generateDeclarations(t.getChild(0));
@@ -138,9 +158,16 @@ public class BPLCodeGen {
         this.output();
         this.output(t.getChild(1).getName() + ":");
         this.output("movq %rsp, %rbx");
-        // allocate space for max position local decs
+        Integer maxPos = this.findMaxPosition(t.getChild(3));
+        if (maxPos != null) {
+            this.output("subq $" + 8 * (maxPos + 1) + ", %rsp",
+                "Allocate space for local variables");
+        }
         this.generateCompound(t.getChild(3));
-        // deallocate space for local decs
+        if (maxPos != null) {
+            this.output("addq $" + 8 * (maxPos + 1) + ", %rsp",
+                "Deallocate space for local variables");
+        }
         this.output("ret");
     }
 
@@ -197,8 +224,32 @@ public class BPLCodeGen {
     }
 
     private void generateAssignExp(BPLParseTreeNode t) {
-        //TODO
-        this.output("movl $12, %eax", "placeholder for assignment eval");
+        if (t.getChild(1).isExpType("STRING")) {
+
+        }
+        else if (t.getChild(1).isExpType("INT")) {
+            this.generateExpression(t.getChild(1));
+            BPLParseTreeNode var = t.getChild(0);
+            BPLParseTreeNode dec = var.getDeclaration();
+            IdNode id = (IdNode)dec.getChild(1);
+            String name = id.getId();
+            if (id.getDepth() >= 2) { // local decs
+                int offset = -8 - 8 * id.getPosition();
+                this.output("movq %rax, " + offset + "(%rbx)",
+                    "assign to variable " + name);
+            }
+            else if (id.getDepth() == 1) { // params
+                // TODO: test
+                int offset = 16 + 8 * id.getPosition();
+                this.output("movq %rax, " + offset + "(%rbx)",
+                    "assign to variable " + name);
+            }
+            else { // globals
+                this.output("movq %rax, " + name,
+                    "assign to variable " + name);
+            }
+        }
+        // arrays, pointers?
     }
 
     private void generateCompExp(BPLParseTreeNode t) {
@@ -313,7 +364,23 @@ public class BPLCodeGen {
             this.generateRead(exp);
         }
         else if (exp.isNodeType("<id>")) {
-
+            BPLParseTreeNode dec = exp.getDeclaration();
+            IdNode id = (IdNode)dec.getChild(1);
+            String name = id.getId();
+            if (id.getDepth() >= 2) { // local decs
+                int offset = -8 - 8 * id.getPosition();
+                this.output("movq " + offset + "(%rbx), %rax",
+                    "variable " + name);
+            }
+            else if (id.getDepth() == 1) { // params
+                // TODO: test
+                int offset = 16 + 8 * id.getPosition();
+                this.output("movq " + offset + "(%rbx), %rax",
+                    "variable " + name);
+            }
+            else { // globals
+                this.output("movq " + name + ", %rax", "variable " + name);
+            }
         }
         else if (exp.isNodeType("COMP_EXPRESSION")) {
             this.generateCompExp(exp);
@@ -329,7 +396,7 @@ public class BPLCodeGen {
     private void generateFunCall(BPLParseTreeNode t) {
         //push arguments onto stack
         this.output("push %rbx", "Push frame pointer");
-        this.output("call " + t.getChild(1).getName(), "Call function");
+        this.output("call " + t.getChild(0).getName(), "Call function");
         this.output("pop %rbx", "Retrieve frame pointer");
         //remove arguments from stack
     }
@@ -363,7 +430,11 @@ public class BPLCodeGen {
     }
 
     private void generateReturn(BPLParseTreeNode t) {
-
+        this.output("movq %rbx, %rsp");
+        if (t.numChildren() > 0) {
+            this.generateExpression(t.getChild(0));
+        }
+        this.output("ret");
     }
 
     private void generateWriteln(BPLParseTreeNode t) {

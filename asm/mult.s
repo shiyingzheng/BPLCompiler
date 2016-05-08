@@ -8,6 +8,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 	movl $1, %eax
 	push %rax 	# multiplication here
 	movl $5, %eax

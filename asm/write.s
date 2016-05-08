@@ -9,6 +9,7 @@
 .globl main
 
 main:
+	movq %rsp, %rbx
 	movl $5, %eax
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
