@@ -104,7 +104,6 @@ public class BPLCodeGen {
             pos += ((IntValueNode)t.getChild(2)).getValue() - 1;
         }
         id.setPosition(pos);
-        //System.out.println(((IdNode)t.getChild(1)).getId() + " " + depth + " " + pos);
     }
 
     private Integer findMaxPosition(BPLParseTreeNode t) {
