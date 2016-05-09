@@ -1,6 +1,10 @@
 string meow;
 int mm;
 
+void f(int A[]) {
+    /*A[0];*/
+}
+
 void main(void) {
     int i;
     string s;
@@ -11,11 +15,12 @@ void main(void) {
 
     i = 0;
     s = "meow";
-    A[2] = 2;
+    A[2] = i;
     B[1] = s;
     *meow = 5;
     *str = "haha";
     {int b;}
     {int c;}
     ;
+    f(A);
 }

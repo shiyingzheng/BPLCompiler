@@ -240,6 +240,10 @@ public class BPLTypeChecker {
                 && var.getDeclaration().getNodeType().contains("POINTER")) {
             this.checkPtrAddrAssign(var, tree.getChild(1));
         }
+        if (t1.contains("ARR") || t2.contains("ARR")) {
+            throw new BPLTypeCheckerException(var.getLineNumber(),
+                "Cannot assign array to variable");
+        }
         return t1;
     }
 
@@ -516,6 +520,7 @@ public class BPLTypeChecker {
             if (!dec.getNodeType().contains("ARRAY")) {
                 this.varException(tree, dec);
             }
+            this.checkExpression(tree.getChild(1));
         }
         else {
             if (dec.getNodeType().contains("POINTER")) {

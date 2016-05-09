@@ -11,9 +11,35 @@
 .globl main
 .comm y, 8, 32
 .comm z, 8, 32
+.comm C, 80, 32
 
 h:
 	movq %rsp, %rbx
+	movq $3, %rax 	# evaluate number
+	push %rax
+	movq $2, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $16, %rax
+	movq %rax, %rdx
+	pop %rax
+	movq %rax, 0(%rdx) 	# assign to array elmt
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq $2, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $16, %rax
+	movq 0(%rax), %rax
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movl $0, %eax 	# writeln
+	movq $.WritelnString, %rdi
+	call printf
 	movq $5, %rax 	# evaluate number
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
@@ -39,10 +65,12 @@ Label2:
 
 f:
 	movq %rsp, %rbx
+	subq $24, %rsp 	# Allocate space for local variables
+	movq -24(%rbx), %rax 	# variable B
 	push %rbx 	# Push frame pointer
 	call h 	# Call function
 	pop %rbx 	# Retrieve frame pointer
-	addq $0, %rsp 	# remove args
+	addq $8, %rsp 	# remove args
 	movq $5, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
 	movq 16(%rbx), %rax 	# variable x
@@ -122,6 +150,7 @@ f:
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	ret
+	addq $24, %rsp 	# Deallocate space for local variables
 	ret
 
 main:
@@ -138,7 +167,50 @@ main:
 	movq $.String2, %rax 	# evaluate string
 	movq %rax, -32(%rbx) 	# assign to variable p
 	movq $3, %rax 	# evaluate number
-	movq %rax, -56(%rbx) 	# assign to variable A
+	push %rax
+	movq $1, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $-56, %rax
+	movq %rax, %rdx
+	pop %rax
+	movq %rax, 0(%rdx) 	# assign to array elmt
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq $2, %rax 	# evaluate number
+	push %rax
+	movq $0, %rax 	# evaluate number
+	imul $8, %eax
+	addq $C, %rax
+	movq %rax, %rdx
+	pop %rax
+	movq %rax, 0(%rdx) 	# assign to array elmt
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq $1, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $-56, %rax
+	movq 0(%rax), %rax
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq $0, %rax 	# evaluate number
+	imul $8, %eax
+	addq $C, %rax
+	movq 0(%rax), %rax 	# assign to array elmt
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movl $0, %eax 	# writeln
+	movq $.WritelnString, %rdi
+	call printf
 	movq -8(%rbx), %rax 	# variable x
 	neg %eax 	# negation
 	movl %eax, %esi 	# write int

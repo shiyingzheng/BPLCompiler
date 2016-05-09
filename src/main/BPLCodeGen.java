@@ -224,32 +224,53 @@ public class BPLCodeGen {
 
     private void generateAssignExp(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(1);
-        if (exp.isExpType("STRING") || exp.isExpType("INT")) {
-            this.generateExpression(t.getChild(1));
-            BPLParseTreeNode var = t.getChild(0);
-            BPLParseTreeNode dec = var.getDeclaration();
-            IdNode id = (IdNode)dec.getChild(1);
-            String name = id.getId();
-            if (id.getDepth() >= 2) { // local decs
-                int offset = -8 - 8 * id.getPosition();
+        this.generateExpression(t.getChild(1));
+        BPLParseTreeNode var = t.getChild(0);
+        BPLParseTreeNode dec = var.getDeclaration();
+        IdNode id = (IdNode)dec.getChild(1);
+        String name = id.getId();
+        if (exp.getExpType().contains("PTR")) {
+            return;
+        }
+        if (id.getDepth() >= 1) { // local decs and params
+            int offset;
+            if (id.getDepth() == 1) {
+                offset = 16 + 8 * id.getPosition();
+            }
+            else {
+                offset = -8 - 8 * id.getPosition();
+            }
+            if (dec.getNodeType().contains("ARRAY")) {
+                this.output("push %rax");
+                this.generateExpression(var.getChild(1));
+                this.output("imul $8, %eax");
+                this.output("addq %rbx, %rax");
+                this.output("addq $" + offset + ", %rax");
+                this.output("movq %rax, %rdx");
+                this.output("pop %rax");
+                this.output("movq %rax, 0(%rdx)", "assign to array elmt");
+            }
+            else {
                 this.output("movq %rax, " + offset + "(%rbx)",
                     "assign to variable " + name);
             }
-            else if (id.getDepth() == 1) { // params
-                // TODO: test
-                int offset = 16 + 8 * id.getPosition();
-                this.output("movq %rax, " + offset + "(%rbx)",
-                    "assign to variable " + name);
+        }
+        else { // globals
+            if (dec.getNodeType().contains("ARRAY")) {
+                //TODO: test when array factor done
+                this.output("push %rax");
+                this.generateExpression(var.getChild(1));
+                this.output("imul $8, %eax");
+                this.output("addq $" + name + ", %rax");
+                this.output("movq %rax, %rdx");
+                this.output("pop %rax");
+                this.output("movq %rax, 0(%rdx)", "assign to array elmt");
             }
-            else { // globals
+            else {
                 this.output("movq %rax, " + name,
                     "assign to variable " + name);
             }
         }
-        else {
-
-        }
-        // arrays, pointers?
     }
 
     private void generateCompExp(BPLParseTreeNode t) {
@@ -354,7 +375,7 @@ public class BPLCodeGen {
     private void generateFactor(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
         if (t.numChildren() > 1) {
-            this.generateArrayElmtFactor(exp);
+            this.generateArrayElmtFactor(t);
         }
         else if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
@@ -368,7 +389,6 @@ public class BPLCodeGen {
             this.generateRead(exp);
         }
         else if (exp.isNodeType("<id>")) {
-            // TODO: arrs and pointers
             BPLParseTreeNode dec = exp.getDeclaration();
             IdNode id = (IdNode)dec.getChild(1);
             String name = id.getId();
@@ -398,16 +418,29 @@ public class BPLCodeGen {
     }
 
     private void generateArrayElmtFactor(BPLParseTreeNode t) {
-        IdNode id = ((IdNode)t.getChild(0));
+        BPLParseTreeNode var = t.getChild(0);
+        BPLParseTreeNode dec = var.getDeclaration();
+        IdNode id = (IdNode)dec.getChild(1);
+        String name = id.getId();
         int depth = id.getDepth();
-        if (depth >= 2) {
-
-        }
-        else if (depth == 1) {
-
+        this.generateExpression(t.getChild(1));
+        if (depth >= 1) {
+            int offset;
+            if (depth == 1) {
+                offset = 16 + 8 * id.getPosition();
+            }
+            else {
+                offset = -8 - 8 * id.getPosition();
+            }
+            this.output("imul $8, %eax");
+            this.output("addq %rbx, %rax");
+            this.output("addq $" + offset + ", %rax");
+            this.output("movq 0(%rax), %rax");
         }
         else {
-
+            this.output("imul $8, %eax");
+            this.output("addq $" + name + ", %rax");
+            this.output("movq 0(%rax), %rax", "assign to array elmt");
         }
     }
 
