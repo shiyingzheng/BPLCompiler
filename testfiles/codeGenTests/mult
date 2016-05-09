@@ -8,4 +8,5 @@ void main(void) {
     write(5 % 3);
     write(16 / (2 * 2));
     write(16 / (5 % 3));
+    write(16 / 2 / 2);
 }

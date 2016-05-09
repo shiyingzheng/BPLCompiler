@@ -17,7 +17,7 @@ main:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jge Label0
+	jg Label0
 	movl $0, %eax
 	jmp Label1
 Label0:
@@ -36,7 +36,7 @@ Label2:
 	push %rax 	# comparison
 	movq $5, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jge Label3
+	jg Label3
 	movl $0, %eax
 	jmp Label4
 Label3:
@@ -60,7 +60,7 @@ Label5:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jge Label6
+	jg Label6
 	movl $0, %eax
 	jmp Label7
 Label6:

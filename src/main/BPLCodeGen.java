@@ -282,10 +282,10 @@ public class BPLCodeGen {
         this.generateE(t.getChild(2));
         String op = t.getChild(1).getNodeType();
         if (op.equals("<=")) {
-            op = "jl";
+            op = "jle";
         }
         else if (op.equals("<")) {
-            op = "jle";
+            op = "jl";
         }
         else if (op.equals("==")) {
             op = "je";
@@ -294,10 +294,10 @@ public class BPLCodeGen {
             op = "jne";
         }
         else if (op.equals(">=")) {
-            op = "jg";
+            op = "jge";
         }
         else if (op.equals(">")) {
-            op = "jge";
+            op = "jg";
         }
         int label = this.getLabelNumber();
         this.output("cmpl %eax, 0(%rsp)");
@@ -490,14 +490,15 @@ public class BPLCodeGen {
 
     private void generateWhile(BPLParseTreeNode t){
         //TODO test when variables are implemented
-        this.output("Label" + this.getLabelNumber() + ":");
+        int label1 = this.getLabelNumber();
+        int label2 = this.getLabelNumber();
+        this.output("Label" + label1 + ":");
         this.generateExpression(t.getChild(0));
         this.output("cmpl $0, %eax", "while statement");
-        int label = this.getLabelNumber();
-        this.output("je Label" + label);
+        this.output("je Label" + label2);
         this.generateStmt(t.getChild(1));
-        this.output("jmp Label" + (label - 1));
-        this.output("Label" + label + ":");
+        this.output("jmp Label" + label1);
+        this.output("Label" + label2 + ":");
     }
 
     private void generateReturn(BPLParseTreeNode t) {

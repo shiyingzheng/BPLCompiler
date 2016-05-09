@@ -1,0 +1,10 @@
+void main(void) {
+    int n;
+    n = 0;
+    while(n < 10) {
+        write(n);
+        write(n < 10);
+        writeln();
+        n = n + 1;
+    }
+}

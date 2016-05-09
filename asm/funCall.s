@@ -44,7 +44,7 @@ h:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jge Label0
+	jg Label0
 	movl $0, %eax
 	jmp Label1
 Label0:

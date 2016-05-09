@@ -110,4 +110,19 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
+	movq $2, %rax 	# evaluate number
+	movl %eax, %ebp 	# division here
+	movq $2, %rax 	# evaluate number
+	movl %eax, %ebp 	# division here
+	movq $16, %rax 	# evaluate number
+	cltq
+	cqto
+	idivl %ebp
+	cltq
+	cqto
+	idivl %ebp
+	movl %eax, %esi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
 	ret
