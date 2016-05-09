@@ -223,10 +223,8 @@ public class BPLCodeGen {
     }
 
     private void generateAssignExp(BPLParseTreeNode t) {
-        if (t.getChild(1).isExpType("STRING")) {
-
-        }
-        else if (t.getChild(1).isExpType("INT")) {
+        BPLParseTreeNode exp = t.getChild(1);
+        if (exp.isExpType("STRING") || exp.isExpType("INT")) {
             this.generateExpression(t.getChild(1));
             BPLParseTreeNode var = t.getChild(0);
             BPLParseTreeNode dec = var.getDeclaration();
@@ -247,6 +245,9 @@ public class BPLCodeGen {
                 this.output("movq %rax, " + name,
                     "assign to variable " + name);
             }
+        }
+        else {
+
         }
         // arrays, pointers?
     }
@@ -353,7 +354,7 @@ public class BPLCodeGen {
     private void generateFactor(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
         if (t.numChildren() > 1) {
-            // array element
+            this.generateArrayElmtFactor(exp);
         }
         else if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
@@ -367,6 +368,7 @@ public class BPLCodeGen {
             this.generateRead(exp);
         }
         else if (exp.isNodeType("<id>")) {
+            // TODO: arrs and pointers
             BPLParseTreeNode dec = exp.getDeclaration();
             IdNode id = (IdNode)dec.getChild(1);
             String name = id.getId();
@@ -392,6 +394,20 @@ public class BPLCodeGen {
         }
         else if (exp.isNodeType("FUNCTION_CALL")) {
             this.generateFunCall(exp);
+        }
+    }
+
+    private void generateArrayElmtFactor(BPLParseTreeNode t) {
+        IdNode id = ((IdNode)t.getChild(0));
+        int depth = id.getDepth();
+        if (depth >= 2) {
+
+        }
+        else if (depth == 1) {
+
+        }
+        else {
+
         }
     }
 

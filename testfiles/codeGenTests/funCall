@@ -10,10 +10,12 @@ void h(void) {
     }
 }
 
-int f(int x, int y) {
+int f(int x, int y, string p) {
     h();
+    x = x + 5;
     write(x);
     write(y);
+    write(p);
     write(5 + 7 + x);
     write(5 + 7 + x + y);
     write(x * y * 2);
@@ -24,16 +26,19 @@ void main(void) {
     int x;
     int w;
     int A[5];
+    string p;
     x = 512;
     y = 55;
     w = 55;
     z = "pewpew";
+    p = "meow";
     A[0] = 3;
     write(-x);
     write(y);
     write(z);
-    write(f(x, y));
-    write(f(x, w));
+    write(p);
+    write(f(x, y, p));
+    write(f(x, w, p));
     write(5 + 7 + 512 + 55);
     write(3 * 8 * 9 * 2);
 }

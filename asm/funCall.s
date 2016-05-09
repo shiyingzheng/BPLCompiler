@@ -6,6 +6,7 @@
 .WriteHiBobString: .string "Hi Bob!"
 .String0: .string "bye"
 .String1: .string "pewpew"
+.String2: .string "meow"
 .text
 .globl main
 .comm y, 8, 32
@@ -42,6 +43,12 @@ f:
 	call h 	# Call function
 	pop %rbx 	# Retrieve frame pointer
 	addq $0, %rsp 	# remove args
+	movq $5, %rax 	# evaluate number
+	push %rax 	# addition/subtraction here
+	movq 16(%rbx), %rax 	# variable x
+	addq 0(%rsp), %rax
+	addq $8, %rsp
+	movq %rax, 16(%rbx) 	# assign to variable x
 	movq 16(%rbx), %rax 	# variable x
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -50,6 +57,11 @@ f:
 	movq 24(%rbx), %rax 	# variable y
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq 32(%rbx), %rax 	# variable p
+	movq %rax, %rsi 	# write string
+	movq $.WriteStrString, %rdi
 	movl $0, %eax
 	call printf
 	movq 16(%rbx), %rax 	# variable x
@@ -121,6 +133,10 @@ main:
 	movq %rax, y 	# assign to variable y
 	movq $55, %rax 	# evaluate number
 	movq %rax, -16(%rbx) 	# assign to variable w
+	movq $.String1, %rax 	# evaluate string
+	movq %rax, z 	# assign to variable z
+	movq $.String2, %rax 	# evaluate string
+	movq %rax, -32(%rbx) 	# assign to variable p
 	movq $3, %rax 	# evaluate number
 	movq %rax, -56(%rbx) 	# assign to variable A
 	movq -8(%rbx), %rax 	# variable x
@@ -139,6 +155,13 @@ main:
 	movq $.WriteStrString, %rdi
 	movl $0, %eax
 	call printf
+	movq -32(%rbx), %rax 	# variable p
+	movq %rax, %rsi 	# write string
+	movq $.WriteStrString, %rdi
+	movl $0, %eax
+	call printf
+	movq -32(%rbx), %rax 	# variable p
+	push %rax 	# string argument
 	movq y, %rax 	# variable y
 	push %rax 	# int argument
 	movq -8(%rbx), %rax 	# variable x
@@ -146,11 +169,13 @@ main:
 	push %rbx 	# Push frame pointer
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer
-	addq $16, %rsp 	# remove args
+	addq $24, %rsp 	# remove args
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
+	movq -32(%rbx), %rax 	# variable p
+	push %rax 	# string argument
 	movq -16(%rbx), %rax 	# variable w
 	push %rax 	# int argument
 	movq -8(%rbx), %rax 	# variable x
@@ -158,7 +183,7 @@ main:
 	push %rbx 	# Push frame pointer
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer
-	addq $16, %rsp 	# remove args
+	addq $24, %rsp 	# remove args
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
