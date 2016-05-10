@@ -44,18 +44,18 @@ h:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jg Label0
+	jg .Label0
 	movl $0, %eax
-	jmp Label1
-Label0:
+	jmp .Label1
+.Label0:
 	movl $1, %eax
-Label1:
+.Label1:
 	addq $8, %rsp
 	cmpl $0, %eax 	# if statement
-	je Label2
+	je .Label2
 	movq %rbx, %rsp 	# return statement
 	ret
-Label2:
+.Label2:
 	movq $.String0, %rax 	# evaluate string
 	movq %rax, %rsi 	# write string
 	movq $.WriteStrString, %rdi

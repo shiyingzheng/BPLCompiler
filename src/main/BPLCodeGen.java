@@ -299,14 +299,15 @@ public class BPLCodeGen {
         else if (op.equals(">")) {
             op = "jg";
         }
-        int label = this.getLabelNumber();
+        String label1 = this.getLabel();
+        String label2 = this.getLabel();
         this.output("cmpl %eax, 0(%rsp)");
-        this.output(op + " Label" + label);
+        this.output(op + " " + label1);
         this.output("movl $0, %eax");
-        this.output("jmp Label" + this.getLabelNumber());
-        this.output("Label" + label + ":");
+        this.output("jmp " + label2);
+        this.output(label1 + ":");
         this.output("movl $1, %eax");
-        this.output("Label" + (label+1) + ":");
+        this.output(label2 + ":");
         this.output("addq $8, %rsp");
     }
 
@@ -479,10 +480,10 @@ public class BPLCodeGen {
     private void generateIf(BPLParseTreeNode t) {
         this.generateExpression(t.getChild(0));
         this.output("cmpl $0, %eax", "if statement");
-        int label = this.getLabelNumber();
-        this.output("je Label" + label);
+        String label = this.getLabel();
+        this.output("je " + label);
         this.generateStmt(t.getChild(1));
-        this.output("Label" + label + ":");
+        this.output(label + ":");
         if (t.numChildren() > 2) {
             this.generateStmt(t.getChild(2));
         }
@@ -490,15 +491,15 @@ public class BPLCodeGen {
 
     private void generateWhile(BPLParseTreeNode t){
         //TODO test when variables are implemented
-        int label1 = this.getLabelNumber();
-        int label2 = this.getLabelNumber();
-        this.output("Label" + label1 + ":");
+        String label1 = this.getLabel();
+        String label2 = this.getLabel();
+        this.output(label1 + ":");
         this.generateExpression(t.getChild(0));
         this.output("cmpl $0, %eax", "while statement");
-        this.output("je Label" + label2);
+        this.output("je " + label2);
         this.generateStmt(t.getChild(1));
-        this.output("jmp Label" + label1);
-        this.output("Label" + label2 + ":");
+        this.output("jmp " + label1);
+        this.output(label2 + ":");
     }
 
     private void generateReturn(BPLParseTreeNode t) {
@@ -550,8 +551,9 @@ public class BPLCodeGen {
         return this.stringNumber++;
     }
 
-    private int getLabelNumber() {
-        return this.labelNumber++;
+    private String getLabel() {
+        int num = this.labelNumber++;
+        return ".Label" + num;
     }
 
     private void output() {

@@ -1,0 +1,14 @@
+void main(void) {
+    int n;
+
+    n = 1;
+
+    while(n == 1) {
+        write(n);
+        n = n + 5;
+        write(n);
+        writeln();
+    }
+
+    write(n);
+}

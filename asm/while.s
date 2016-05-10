@@ -9,7 +9,7 @@
 
 main:
 	movq %rsp, %rbx
-Label0:
+.Label0:
 	subq $40, %rsp 	# read input
 	movq %rsp, %rsi
 	addq $24, %rsi
@@ -21,12 +21,12 @@ Label0:
 	movq 24(%rsp), %rax
 	addq $40, %rsp
 	cmpl $0, %eax 	# while statement
-	je Label1
+	je .Label1
 	movq $5, %rax 	# evaluate number
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	jmp Label0
-Label1:
+	jmp .Label0
+.Label1:
 	ret

@@ -13,12 +13,12 @@ main:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jl Label0
+	jl .Label0
 	movl $0, %eax
-	jmp Label1
-Label0:
+	jmp .Label1
+.Label0:
 	movl $1, %eax
-Label1:
+.Label1:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -28,12 +28,12 @@ Label1:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jg Label2
+	jg .Label2
 	movl $0, %eax
-	jmp Label3
-Label2:
+	jmp .Label3
+.Label2:
 	movl $1, %eax
-Label3:
+.Label3:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -43,12 +43,12 @@ Label3:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jle Label4
+	jle .Label4
 	movl $0, %eax
-	jmp Label5
-Label4:
+	jmp .Label5
+.Label4:
 	movl $1, %eax
-Label5:
+.Label5:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -58,12 +58,12 @@ Label5:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	je Label6
+	je .Label6
 	movl $0, %eax
-	jmp Label7
-Label6:
+	jmp .Label7
+.Label6:
 	movl $1, %eax
-Label7:
+.Label7:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -73,12 +73,12 @@ Label7:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jne Label8
+	jne .Label8
 	movl $0, %eax
-	jmp Label9
-Label8:
+	jmp .Label9
+.Label8:
 	movl $1, %eax
-Label9:
+.Label9:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
@@ -88,12 +88,12 @@ Label9:
 	push %rax 	# comparison
 	movq $4, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
-	jge Label10
+	jge .Label10
 	movl $0, %eax
-	jmp Label11
-Label10:
+	jmp .Label11
+.Label10:
 	movl $1, %eax
-Label11:
+.Label11:
 	addq $8, %rsp
 	movl %eax, %esi 	# write int
 	movq $.WriteIntString, %rdi
