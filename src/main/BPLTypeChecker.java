@@ -502,7 +502,7 @@ public class BPLTypeChecker {
             System.out.println(tree);
         }
         this.linkDeclaration(tree);
-        if (tree.isNodeType("ARRAY_VARIABLE")) {
+        if (tree.getNodeType().contains("ARRAY")) {
             this.typeCheckExpression(tree.getChild(1));
         }
     }
