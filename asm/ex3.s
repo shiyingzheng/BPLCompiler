@@ -18,6 +18,7 @@ main:
 	subq $16, %rsp 	# Allocate space for local variables
 	movq $4, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable a
+	movq -16(%rbx), %rax 	# variable b
 	push %rbx 	# Push frame pointer
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer

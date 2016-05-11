@@ -59,7 +59,7 @@ public class BPLCodeGen {
             return null;
         }
         if (t.getNodeType().contains("VARIABLE_DECLARATION")) {
-            this.assignDepthVar(t, depth, pos);
+            pos = this.assignDepthVar(t, depth, pos);
             return pos+1;
         }
 
@@ -97,13 +97,14 @@ public class BPLCodeGen {
         }
     }
 
-    private void assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
+    private Integer assignDepthVar(BPLParseTreeNode t, int depth, int pos) {
         IdNode id = (IdNode)t.getChild(1);
         id.setDepth(depth);
         if (t.isNodeType("ARRAY_VARIABLE_DECLARATION")){
             pos += ((IntValueNode)t.getChild(2)).getValue() - 1;
         }
         id.setPosition(pos);
+        return pos;
     }
 
     private Integer findMaxPosition(BPLParseTreeNode t) {
@@ -473,7 +474,7 @@ public class BPLCodeGen {
             this.output("push %rax", "string argument");
         }
         else if (exp.getNodeType().contains("ARR")) {
-            this.output("push %rax", "array argument");
+
         }
         // TODO: pointers?
         return rest + 1;

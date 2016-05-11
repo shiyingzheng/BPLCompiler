@@ -26,15 +26,15 @@ switch:
 	je .Label2
 	movq 24(%rbx), %rax 	# variable i
 	imul $8, %eax
-	imul $8, %eax
 	addq %rbx, %rax
 	addq $16, %rax
+	movq 0(%rax), %rax
 	movq %rax, -8(%rbx) 	# assign to variable temp
 	movq 32(%rbx), %rax 	# variable j
 	imul $8, %eax
-	imul $8, %eax
 	addq %rbx, %rax
 	addq $16, %rax
+	movq 0(%rax), %rax
 	push %rax
 	movq 24(%rbx), %rax 	# variable i
 	imul $8, %eax
@@ -97,15 +97,15 @@ sort:
 	je .Label8
 	movq -16(%rbx), %rax 	# variable j
 	imul $8, %eax
-	imul $8, %eax
 	addq %rbx, %rax
 	addq $16, %rax
+	movq 0(%rax), %rax
 	push %rax 	# comparison
 	movq -24(%rbx), %rax 	# variable small
 	imul $8, %eax
-	imul $8, %eax
 	addq %rbx, %rax
 	addq $16, %rax
+	movq 0(%rax), %rax
 	cmpl %eax, 0(%rsp)
 	jl .Label11
 	movl $0, %eax
@@ -127,11 +127,11 @@ sort:
 	movq %rax, -16(%rbx) 	# assign to variable j
 	jmp .Label7
 .Label8:
+	movq -24(%rbx), %rax 	# variable small
 	push %rax 	# int argument
+	movq -8(%rbx), %rax 	# variable i
 	push %rax 	# int argument
-	movq %rbx, %rax
-	addq $16, %rax
-	push %rax 	# array argument
+	movq 16(%rbx), %rax 	# variable A
 	push %rbx 	# Push frame pointer
 	call switch 	# Call function
 	pop %rbx 	# Retrieve frame pointer
@@ -191,10 +191,11 @@ main:
 	movq %rax, -8(%rbx) 	# assign to variable i
 	jmp .Label14
 .Label15:
+	movq $10, %rax 	# evaluate number
 	push %rax 	# int argument
+	movq $0, %rax 	# evaluate number
 	push %rax 	# int argument
-	movq $x, %rax
-	push %rax 	# array argument
+	movq x, %rax 	# variable x
 	push %rbx 	# Push frame pointer
 	call sort 	# Call function
 	pop %rbx 	# Retrieve frame pointer

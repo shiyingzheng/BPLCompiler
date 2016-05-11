@@ -27,6 +27,11 @@ fact:
 	ret
 .Label2:
 	movq %rbx, %rsp 	# return statement
+	movq $1, %rax 	# evaluate number
+	push %rax 	# addition/subtraction here
+	movq 16(%rbx), %rax 	# variable n
+	subq 0(%rsp), %rax
+	addq $8, %rsp
 	push %rax 	# int argument
 	push %rbx 	# Push frame pointer
 	call fact 	# Call function
@@ -63,6 +68,7 @@ main:
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
+	movq -8(%rbx), %rax 	# variable x
 	push %rax 	# int argument
 	push %rbx 	# Push frame pointer
 	call fact 	# Call function

@@ -3,8 +3,6 @@ string z;
 int C[10];
 
 void h(int A[]) {
-    write(A[2] = 3);
-    write(A[2]);
     write(A[1]);
     writeln();
     if (5 > 4) {

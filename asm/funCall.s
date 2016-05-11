@@ -15,28 +15,6 @@
 
 h:
 	movq %rsp, %rbx
-	movq $3, %rax 	# evaluate number
-	push %rax
-	movq $2, %rax 	# evaluate number
-	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
-	movq %rax, %rdx
-	pop %rax
-	movq %rax, 0(%rdx) 	# assign to array elmt
-	movq %rax, %rsi 	# write int
-	movq $.WriteIntString, %rdi
-	movl $0, %eax
-	call printf
-	movq $2, %rax 	# evaluate number
-	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
-	movq 0(%rax), %rax
-	movq %rax, %rsi 	# write int
-	movq $.WriteIntString, %rdi
-	movl $0, %eax
-	call printf
 	movq $1, %rax 	# evaluate number
 	imul $8, %eax
 	addq %rbx, %rax
