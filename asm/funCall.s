@@ -24,7 +24,7 @@ h:
 	movq %rax, %rdx
 	pop %rax
 	movq %rax, 0(%rdx) 	# assign to array elmt
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -33,7 +33,16 @@ h:
 	addq %rbx, %rax
 	addq $16, %rax
 	movq 0(%rax), %rax
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq $1, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $16, %rax
+	movq 0(%rax), %rax
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -66,6 +75,15 @@ h:
 f:
 	movq %rsp, %rbx
 	subq $24, %rsp 	# Allocate space for local variables
+	movq $55, %rax 	# evaluate number
+	push %rax
+	movq $1, %rax 	# evaluate number
+	imul $8, %eax
+	addq %rbx, %rax
+	addq $-24, %rax
+	movq %rax, %rdx
+	pop %rax
+	movq %rax, 0(%rdx) 	# assign to array elmt
 	movq -24(%rbx), %rax 	# variable B
 	push %rbx 	# Push frame pointer
 	call h 	# Call function
@@ -78,12 +96,12 @@ f:
 	addq $8, %rsp
 	movq %rax, 16(%rbx) 	# assign to variable x
 	movq 16(%rbx), %rax 	# variable x
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
 	movq 24(%rbx), %rax 	# variable y
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -101,7 +119,7 @@ f:
 	addq $8, %rsp
 	addq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -118,7 +136,7 @@ f:
 	addq $8, %rsp
 	addq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -131,7 +149,7 @@ f:
 	addq $8, %rsp
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -175,7 +193,7 @@ main:
 	movq %rax, %rdx
 	pop %rax
 	movq %rax, 0(%rdx) 	# assign to array elmt
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -187,7 +205,7 @@ main:
 	movq %rax, %rdx
 	pop %rax
 	movq %rax, 0(%rdx) 	# assign to array elmt
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -196,7 +214,7 @@ main:
 	addq %rbx, %rax
 	addq $-56, %rax
 	movq 0(%rax), %rax
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -204,7 +222,7 @@ main:
 	imul $8, %eax
 	addq $C, %rax
 	movq 0(%rax), %rax 	# assign to array elmt
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -213,12 +231,12 @@ main:
 	call printf
 	movq -8(%rbx), %rax 	# variable x
 	neg %eax 	# negation
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
 	movq y, %rax 	# variable y
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -242,7 +260,7 @@ main:
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer
 	addq $24, %rsp 	# remove args
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -256,7 +274,7 @@ main:
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer
 	addq $24, %rsp 	# remove args
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -273,7 +291,7 @@ main:
 	addq $8, %rsp
 	addq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -290,7 +308,7 @@ main:
 	addq $8, %rsp
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

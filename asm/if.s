@@ -27,7 +27,7 @@ main:
 	cmpl $0, %eax 	# if statement
 	je .Label2
 	movq $5, %rax 	# evaluate number
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

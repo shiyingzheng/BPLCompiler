@@ -5,6 +5,7 @@ int C[10];
 void h(int A[]) {
     write(A[2] = 3);
     write(A[2]);
+    write(A[1]);
     writeln();
     if (5 > 4) {
         return;
@@ -16,6 +17,7 @@ void h(int A[]) {
 
 int f(int x, int y, string p) {
     int B[3];
+    B[1] = 55;
     h(B);
     x = x + 5;
     write(x);

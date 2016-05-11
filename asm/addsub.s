@@ -14,7 +14,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	addq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -23,7 +23,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -32,7 +32,7 @@ main:
 	movq $4, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -45,7 +45,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -58,7 +58,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	subq 0(%rsp), %rax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

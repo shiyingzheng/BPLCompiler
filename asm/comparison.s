@@ -20,7 +20,7 @@ main:
 	movl $1, %eax
 .Label1:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -35,7 +35,7 @@ main:
 	movl $1, %eax
 .Label3:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -50,7 +50,7 @@ main:
 	movl $1, %eax
 .Label5:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -65,7 +65,7 @@ main:
 	movl $1, %eax
 .Label7:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -80,7 +80,7 @@ main:
 	movl $1, %eax
 .Label9:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -95,7 +95,7 @@ main:
 	movl $1, %eax
 .Label11:
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

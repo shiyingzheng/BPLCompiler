@@ -27,7 +27,7 @@ main:
 	cmpl $0, %eax 	# while statement
 	je .Label1
 	movq -8(%rbx), %rax 	# variable n
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -38,7 +38,7 @@ main:
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable n
 	movq -8(%rbx), %rax 	# variable n
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -48,7 +48,7 @@ main:
 	jmp .Label0
 .Label1:
 	movq -8(%rbx), %rax 	# variable n
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

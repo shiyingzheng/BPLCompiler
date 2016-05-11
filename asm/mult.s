@@ -14,7 +14,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -23,7 +23,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -32,7 +32,7 @@ main:
 	movq $4, %rax 	# evaluate number
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -45,7 +45,7 @@ main:
 	movq $5, %rax 	# evaluate number
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -55,7 +55,7 @@ main:
 	cltq
 	cqto
 	idivl %ebp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -65,7 +65,7 @@ main:
 	cltq
 	cqto
 	idivl %ebp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -76,7 +76,7 @@ main:
 	cqto
 	idivl %ebp
 	movl %edx, %eax
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -90,7 +90,7 @@ main:
 	cltq
 	cqto
 	idivl %ebp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -106,7 +106,7 @@ main:
 	cltq
 	cqto
 	idivl %ebp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
@@ -121,7 +121,7 @@ main:
 	cltq
 	cqto
 	idivl %ebp
-	movl %eax, %esi 	# write int
+	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf

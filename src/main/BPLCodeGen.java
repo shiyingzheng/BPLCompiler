@@ -257,7 +257,6 @@ public class BPLCodeGen {
         }
         else { // globals
             if (dec.getNodeType().contains("ARRAY")) {
-                //TODO: test when array factor done
                 this.output("push %rax");
                 this.generateExpression(var.getChild(1));
                 this.output("imul $8, %eax");
@@ -473,7 +472,10 @@ public class BPLCodeGen {
         else if (exp.isExpType("STRING")) {
             this.output("push %rax", "string argument");
         }
-        // TODO: arrays? pointers?
+        else if (exp.getNodeType().contains("ARR")) {
+            this.output("push %rax", "array argument");
+        }
+        // TODO: pointers?
         return rest + 1;
     }
 
@@ -490,7 +492,6 @@ public class BPLCodeGen {
     }
 
     private void generateWhile(BPLParseTreeNode t){
-        //TODO test when variables are implemented
         String label1 = this.getLabel();
         String label2 = this.getLabel();
         this.output(label1 + ":");
@@ -520,15 +521,12 @@ public class BPLCodeGen {
         BPLParseTreeNode exp = t.getChild(0);
         this.generateExpression(exp);
         if (exp.isExpType("INT")) {
-            this.output("movl %eax, %esi", "write int");
+            this.output("movq %rax, %rsi", "write int");
             this.output("movq $.WriteIntString, %rdi");
         }
         else if (exp.isExpType("STRING")) {
             this.output("movq %rax, %rsi", "write string");
             this.output("movq $.WriteStrString, %rdi");
-        }
-        else {
-            //TODO, arr, ptr
         }
         this.output("movl $0, %eax");
         this.output("call printf");
