@@ -543,11 +543,11 @@ public class BPLParser {
             f = new BPLParseTreeNode("NEG_F", 1, lineNum);
             f.setChild(0, this.f());
         }
-        else if (t.isType(Token.T_AMP)) {
+        else if (t.isType(Token.T_AMP)) { // &ptr
             f = new BPLParseTreeNode("REF_F", 1, lineNum);
             f.setChild(0, this.factor());
         }
-        else if (t.isType(Token.T_MULT)) {
+        else if (t.isType(Token.T_MULT)) { // *ptr
             f = new BPLParseTreeNode("DEREF_F", 1, lineNum);
             f.setChild(0, this.factor());
         }

@@ -81,9 +81,11 @@ main:
 	movl $0, %eax
 	call printf
 	movq $5, %rax 	# evaluate number
-	movq %rax, -88(%rbx) 	# assign to variable meow
+	movq -88(%rbx), %rdx
+	movq %rax, 0(%rdx) 	# assign to pointer variable meow
 	movq $.String1, %rax 	# evaluate string
-	movq %rax, -96(%rbx) 	# assign to variable str
+	movq -96(%rbx), %rdx
+	movq %rax, 0(%rdx) 	# assign to pointer variable str
 	movq $0, %rax 	# evaluate number
 	push %rax 	# get array A element
 	movq %rbx, %rax 	# array factor

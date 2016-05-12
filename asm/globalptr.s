@@ -6,6 +6,7 @@
 .WriteHiBobString: .string "Hi Bob!"
 .text
 .globl main
+.comm b, 8, 32
 
 f:
 	movq %rsp, %rbx
@@ -28,20 +29,20 @@ f:
 
 main:
 	movq %rsp, %rbx
-	subq $16, %rsp 	# Allocate space for local variables
+	subq $8, %rsp 	# Allocate space for local variables
 	movq %rbx, %rax 	# pointer reference local var a
 	addq $-8, %rax
-	movq %rax, -16(%rbx) 	# assign to variable b
+	movq %rax, b 	# assign to global variable b
 	movq $4, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable a
 	movq $5, %rax 	# evaluate number
-	movq -16(%rbx), %rax 	# local variable b
+	movq b, %rax 	# global variable b
 	movq 0(%rax), %rax 	# pointer dereference
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movq -16(%rbx), %rax 	# local variable b
+	movq b, %rax 	# global variable b
 	push %rax 	# pointer argument
 	push %rbx 	# Push frame pointer
 	call f 	# Call function
@@ -55,5 +56,5 @@ main:
 	movl $0, %eax 	# writeln
 	movq $.WritelnString, %rdi
 	call printf
-	addq $16, %rsp 	# Deallocate space for local variables
+	addq $8, %rsp 	# Deallocate space for local variables
 	ret

@@ -230,10 +230,7 @@ public class BPLCodeGen {
         IdNode id = (IdNode)dec.getChild(1);
         String name = id.getId();
         this.generateExpression(exp);
-        if (exp.getExpType().contains("PTR")) {
-
-        }
-        else if (dec.getNodeType().contains("ARRAY")) {
+        if (dec.getNodeType().contains("ARRAY")) {
             this.output("push %rax");
             this.generateExpression(var.getChild(1));
             this.output("push %rax");
@@ -245,20 +242,42 @@ public class BPLCodeGen {
             this.output("pop %rax");
             this.output("movq %rax, 0(%rdx)", "assign to array elmt");
         }
-        else if (id.getDepth() >= 1) { // local decs and params
-            int offset;
-            if (id.getDepth() == 1) {
-                offset = 16 + 8 * id.getPosition();
+        else if (var.isNodeType("VARIABLE")){
+            if (id.getDepth() >= 1) { // local decs and params
+                int offset;
+                if (id.getDepth() == 1) {
+                    offset = 16 + 8 * id.getPosition();
+                }
+                else {
+                    offset = -8 - 8 * id.getPosition();
+                }
+                this.output("movq %rax, " + offset + "(%rbx)",
+                    "assign to variable " + name);
+            }
+            else { // globals
+                this.output("movq %rax, " + name,
+                    "assign to global variable " + name);
+            }
+        }
+        else {
+            if (id.getDepth() >= 1) {
+                int offset;
+                if (id.getDepth() == 1) {
+                    offset = 16 + 8 * id.getPosition();
+                }
+                else {
+                    offset = -8 - 8 * id.getPosition();
+                }
+                this.output("movq " + offset + "(%rbx), %rdx");
+                this.output("movq %rax, 0(%rdx)",
+                    "assign to pointer variable " + name);
             }
             else {
-                offset = -8 - 8 * id.getPosition();
+                this.output("movq $"+ name + ", %rdx",
+                    "assign to global pointer " + name);
+                this.output("movq %rax, 0(%rdx)",
+                    "assign to global pointer variable " + name);
             }
-            this.output("movq %rax, " + offset + "(%rbx)",
-                "assign to variable " + name);
-        }
-        else { // globals
-            this.output("movq %rax, " + name,
-                "assign to variable " + name);
         }
     }
 
@@ -354,18 +373,45 @@ public class BPLCodeGen {
             this.generateF(t.getChild(0));
             this.output("neg %eax", "negation");
         }
-        else if (t.isNodeType("REF_F")) {
-            //TODO
+        else if (t.isNodeType("REF_F")) { // &ptr
+            BPLParseTreeNode f = t.getChild(0);
+            BPLParseTreeNode var = f.getChild(0);
+            BPLParseTreeNode dec = var.getDeclaration();
+            if (f.numChildren() > 1) {
+                generateArrayElmtFactorAddress(f);
+            }
+            else {
+                IdNode id = (IdNode)dec.getChild(1);
+                String name = id.getId();
+                if (id.getDepth() >= 2) { // local decs
+                    int offset = -8 - 8 * id.getPosition();
+                    this.output("movq %rbx, %rax",
+                        "pointer reference local var " + name);
+                    this.output("addq $" + offset + ", %rax");
+                }
+                else if (id.getDepth() == 1) { // params
+                    int offset = 16 + 8 * id.getPosition();
+                    this.output("movq %rbx, %rax",
+                        "pointer reference param " + name);
+                    this.output("addq $" + offset + ", %rax");
+                }
+                else { // globals
+                    this.output("movq $" + name + ", %rax",
+                        "pointer reference global variable " + name);
+                }
+            }
         }
-        else if (t.isNodeType("DEREF_F")) {
-            //TODO
+        else if (t.isNodeType("DEREF_F")) { // *ptr
+            this.generateFactor(t.getChild(0));
+            this.output("movq 0(%rax), %rax", "pointer dereference");
         }
     }
 
     private void generateFactor(BPLParseTreeNode t) {
         BPLParseTreeNode exp = t.getChild(0);
         if (t.numChildren() > 1) {
-            this.generateArrayElmtFactor(t);
+            this.generateArrayElmtFactorAddress(t);
+            this.output("movq 0(%rax), %rax");
         }
         else if (exp.isNodeType("<num>")){
             int i = ((IntValueNode)exp).getValue();
@@ -438,7 +484,7 @@ public class BPLCodeGen {
         }
     }
 
-    private void generateArrayElmtFactor(BPLParseTreeNode t) {
+    private void generateArrayElmtFactorAddress(BPLParseTreeNode t) {
         BPLParseTreeNode var = t.getChild(0);
         BPLParseTreeNode dec = var.getDeclaration();
         IdNode id = (IdNode)dec.getChild(1);
@@ -451,7 +497,6 @@ public class BPLCodeGen {
         this.output("pop %rax");
         this.output("imul $8, %eax");
         this.output("addq %rdx, %rax");
-        this.output("movq 0(%rax), %rax");
     }
 
     private void generateFunCall(BPLParseTreeNode t) {
@@ -491,7 +536,9 @@ public class BPLCodeGen {
             }
             this.output("push %rax", "array argument");
         }
-        // TODO: pointers?
+        else {
+            this.output("push %rax", "pointer argument");
+        }
         return rest + 1;
     }
 

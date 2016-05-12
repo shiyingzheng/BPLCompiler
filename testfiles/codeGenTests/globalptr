@@ -1,3 +1,5 @@
+int *b;
+
 void f( int *x ) {
     write(*x);  /* should write 4 */
     *x = 23;
@@ -6,7 +8,6 @@ void f( int *x ) {
 
 void main(void) {
     int a;
-    int *b;
     b = &a;
     a = 4;
     5;

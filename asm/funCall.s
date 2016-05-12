@@ -175,11 +175,11 @@ main:
 	movq $512, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable x
 	movq $55, %rax 	# evaluate number
-	movq %rax, y 	# assign to variable y
+	movq %rax, y 	# assign to global variable y
 	movq $55, %rax 	# evaluate number
 	movq %rax, -16(%rbx) 	# assign to variable w
 	movq $.String3, %rax 	# evaluate string
-	movq %rax, z 	# assign to variable z
+	movq %rax, z 	# assign to global variable z
 	movq $.String4, %rax 	# evaluate string
 	movq %rax, -64(%rbx) 	# assign to variable p
 	movq $3, %rax 	# evaluate number
