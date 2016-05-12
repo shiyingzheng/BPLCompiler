@@ -13,7 +13,7 @@ main:
 	movq $0, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable n
 .Label0:
-	movq -8(%rbx), %rax 	# variable n
+	movq -8(%rbx), %rax 	# local variable n
 	push %rax 	# comparison
 	movq $10, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -26,12 +26,12 @@ main:
 	addq $8, %rsp
 	cmpl $0, %eax 	# while statement
 	je .Label1
-	movq -8(%rbx), %rax 	# variable n
+	movq -8(%rbx), %rax 	# local variable n
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movq -8(%rbx), %rax 	# variable n
+	movq -8(%rbx), %rax 	# local variable n
 	push %rax 	# comparison
 	movq $10, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -51,7 +51,7 @@ main:
 	call printf
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -8(%rbx), %rax 	# variable n
+	movq -8(%rbx), %rax 	# local variable n
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable n

@@ -11,9 +11,9 @@
 switch:
 	movq %rsp, %rbx
 	subq $8, %rsp 	# Allocate space for local variables
-	movq 24(%rbx), %rax 	# variable i
+	movq 24(%rbx), %rax 	# param i
 	push %rax 	# comparison
-	movq 32(%rbx), %rax 	# variable j
+	movq 32(%rbx), %rax 	# param j
 	cmpl %eax, 0(%rsp)
 	jne .Label0
 	movl $0, %eax
@@ -24,32 +24,42 @@ switch:
 	addq $8, %rsp
 	cmpl $0, %eax 	# if statement
 	je .Label2
-	movq 24(%rbx), %rax 	# variable i
-	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
-	movq 0(%rax), %rax
-	movq %rax, -8(%rbx) 	# assign to variable temp
-	movq 32(%rbx), %rax 	# variable j
-	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
-	movq 0(%rax), %rax
-	push %rax
-	movq 24(%rbx), %rax 	# variable i
-	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
+	movq 24(%rbx), %rax 	# param i
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
 	movq %rax, %rdx
 	pop %rax
-	movq %rax, 0(%rdx) 	# assign to array elmt
-	movq -8(%rbx), %rax 	# variable temp
-	push %rax
-	movq 32(%rbx), %rax 	# variable j
 	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
+	addq %rdx, %rax
+	movq 0(%rax), %rax
+	movq %rax, -8(%rbx) 	# assign to variable temp
+	movq 32(%rbx), %rax 	# param j
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
 	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rdx, %rax
+	movq 0(%rax), %rax
+	push %rax
+	movq 24(%rbx), %rax 	# param i
+	push %rax
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rax, %rdx
+	pop %rax
+	movq %rax, 0(%rdx) 	# assign to array elmt
+	movq -8(%rbx), %rax 	# local variable temp
+	push %rax
+	movq 32(%rbx), %rax 	# param j
+	push %rax
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rax, %rdx
 	pop %rax
 	movq %rax, 0(%rdx) 	# assign to array elmt
 .Label2:
@@ -59,14 +69,14 @@ switch:
 sort:
 	movq %rsp, %rbx
 	subq $24, %rsp 	# Allocate space for local variables
-	movq 24(%rbx), %rax 	# variable first
+	movq 24(%rbx), %rax 	# param first
 	movq %rax, -8(%rbx) 	# assign to variable i
 .Label3:
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	push %rax 	# comparison
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq 32(%rbx), %rax 	# variable last
+	movq 32(%rbx), %rax 	# param last
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	cmpl %eax, 0(%rsp)
@@ -79,12 +89,14 @@ sort:
 	addq $8, %rsp
 	cmpl $0, %eax 	# while statement
 	je .Label4
-	movq -16(%rbx), %rax 	# variable j
+	movq -8(%rbx), %rax 	# local variable i
+	movq %rax, -16(%rbx) 	# assign to variable j
+	movq -16(%rbx), %rax 	# local variable j
 	movq %rax, -24(%rbx) 	# assign to variable small
 .Label7:
-	movq -16(%rbx), %rax 	# variable j
+	movq -16(%rbx), %rax 	# local variable j
 	push %rax 	# comparison
-	movq 32(%rbx), %rax 	# variable last
+	movq 32(%rbx), %rax 	# param last
 	cmpl %eax, 0(%rsp)
 	jl .Label9
 	movl $0, %eax
@@ -95,16 +107,22 @@ sort:
 	addq $8, %rsp
 	cmpl $0, %eax 	# while statement
 	je .Label8
-	movq -16(%rbx), %rax 	# variable j
+	movq -16(%rbx), %rax 	# local variable j
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
 	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
+	addq %rdx, %rax
 	movq 0(%rax), %rax
 	push %rax 	# comparison
-	movq -24(%rbx), %rax 	# variable small
+	movq -24(%rbx), %rax 	# local variable small
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
 	imul $8, %eax
-	addq %rbx, %rax
-	addq $16, %rax
+	addq %rdx, %rax
 	movq 0(%rax), %rax
 	cmpl %eax, 0(%rsp)
 	jl .Label11
@@ -116,29 +134,30 @@ sort:
 	addq $8, %rsp
 	cmpl $0, %eax 	# if statement
 	je .Label13
-	movq -16(%rbx), %rax 	# variable j
+	movq -16(%rbx), %rax 	# local variable j
 	movq %rax, -24(%rbx) 	# assign to variable small
 .Label13:
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -16(%rbx), %rax 	# variable j
+	movq -16(%rbx), %rax 	# local variable j
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -16(%rbx) 	# assign to variable j
 	jmp .Label7
 .Label8:
-	movq -24(%rbx), %rax 	# variable small
+	movq -24(%rbx), %rax 	# local variable small
 	push %rax 	# int argument
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	push %rax 	# int argument
-	movq 16(%rbx), %rax 	# variable A
+	movq 16(%rbx), %rax
+	push %rax 	# array argument
 	push %rbx 	# Push frame pointer
 	call switch 	# Call function
 	pop %rbx 	# Retrieve frame pointer
 	addq $24, %rsp 	# remove args
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable i
@@ -153,7 +172,7 @@ main:
 	movq $0, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable i
 .Label14:
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	push %rax 	# comparison
 	movq $10, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -177,15 +196,18 @@ main:
 	movq 24(%rsp), %rax
 	addq $40, %rsp
 	push %rax
-	movq -8(%rbx), %rax 	# variable i
-	imul $8, %eax
-	addq $x, %rax
+	movq -8(%rbx), %rax 	# local variable i
+	push %rax
+	movq $x, %rax
 	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rax, %rdx
 	pop %rax
 	movq %rax, 0(%rdx) 	# assign to array elmt
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable i
@@ -195,7 +217,8 @@ main:
 	push %rax 	# int argument
 	movq $0, %rax 	# evaluate number
 	push %rax 	# int argument
-	movq x, %rax 	# variable x
+	movq $x, %rax
+	push %rax 	# array argument
 	push %rbx 	# Push frame pointer
 	call sort 	# Call function
 	pop %rbx 	# Retrieve frame pointer
@@ -203,7 +226,7 @@ main:
 	movq $0, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable i
 .Label18:
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	push %rax 	# comparison
 	movq $10, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -216,17 +239,21 @@ main:
 	addq $8, %rsp
 	cmpl $0, %eax 	# while statement
 	je .Label19
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
+	push %rax 	# get array x element
+	movq $x, %rax
+	movq %rax, %rdx
+	pop %rax
 	imul $8, %eax
-	addq $x, %rax
-	movq 0(%rax), %rax 	# assign to array elmt
+	addq %rdx, %rax
+	movq 0(%rax), %rax
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -8(%rbx), %rax 	# variable i
+	movq -8(%rbx), %rax 	# local variable i
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable i

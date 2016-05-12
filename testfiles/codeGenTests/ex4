@@ -1,0 +1,43 @@
+void Print(int A[], int n) {
+   int i;
+   i = 0;
+   while (i < n) {
+       write(A[i]);
+       writeln();
+       i = i + 1;
+ }
+}
+
+void Sort(int A[], int n) {
+       int i;
+       int small;
+       int j;
+       int t;
+       i = 0;
+       while (i < n-1) {
+           small = i;
+           j = i+1;
+           while (j < n) {
+               if (A[j] < A[small])
+                   small = j;
+               j = j+1;
+           }
+           t = A[i];
+           A[i] = A[small];
+           A[small] = t;
+           i = i + 1;
+       }
+}
+
+
+void main(void) {
+   int A[100];
+   A[0] = 23;
+   A[1] = 14;
+   A[2] = 7;
+   A[3] = 19;
+   A[4] = 29;
+   A[5] = 12;
+   Sort(A, 6);
+   Print(A, 6);
+}

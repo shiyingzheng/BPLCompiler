@@ -9,7 +9,7 @@
 
 fact:
 	movq %rsp, %rbx
-	movq 16(%rbx), %rax 	# variable n
+	movq 16(%rbx), %rax 	# param n
 	push %rax 	# comparison
 	movq $0, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -29,7 +29,7 @@ fact:
 	movq %rbx, %rsp 	# return statement
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq 16(%rbx), %rax 	# variable n
+	movq 16(%rbx), %rax 	# param n
 	subq 0(%rsp), %rax
 	addq $8, %rsp
 	push %rax 	# int argument
@@ -38,7 +38,7 @@ fact:
 	pop %rbx 	# Retrieve frame pointer
 	addq $8, %rsp 	# remove args
 	push %rax 	# multiplication here
-	movq 16(%rbx), %rax 	# variable n
+	movq 16(%rbx), %rax 	# param n
 	imul 0(%rsp) , %eax
 	addq $8, %rsp
 	ret
@@ -50,7 +50,7 @@ main:
 	movq $1, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable x
 .Label3:
-	movq -8(%rbx), %rax 	# variable x
+	movq -8(%rbx), %rax 	# local variable x
 	push %rax 	# comparison
 	movq $10, %rax 	# evaluate number
 	cmpl %eax, 0(%rsp)
@@ -63,12 +63,12 @@ main:
 	addq $8, %rsp
 	cmpl $0, %eax 	# while statement
 	je .Label4
-	movq -8(%rbx), %rax 	# variable x
+	movq -8(%rbx), %rax 	# local variable x
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
 	call printf
-	movq -8(%rbx), %rax 	# variable x
+	movq -8(%rbx), %rax 	# local variable x
 	push %rax 	# int argument
 	push %rbx 	# Push frame pointer
 	call fact 	# Call function
@@ -83,7 +83,7 @@ main:
 	call printf
 	movq $1, %rax 	# evaluate number
 	push %rax 	# addition/subtraction here
-	movq -8(%rbx), %rax 	# variable x
+	movq -8(%rbx), %rax 	# local variable x
 	addq 0(%rsp), %rax
 	addq $8, %rsp
 	movq %rax, -8(%rbx) 	# assign to variable x

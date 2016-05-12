@@ -18,7 +18,7 @@ void sort( int A[], int first, int last ) {
     i = first;
 
     while (i < last-1) {
-
+        j = i;
         small = j;
 
         while (j < last) {

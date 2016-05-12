@@ -18,12 +18,12 @@ main:
 	subq $16, %rsp 	# Allocate space for local variables
 	movq $4, %rax 	# evaluate number
 	movq %rax, -8(%rbx) 	# assign to variable a
-	movq -16(%rbx), %rax 	# variable b
+	movq -16(%rbx), %rax 	# local variable b
 	push %rbx 	# Push frame pointer
 	call f 	# Call function
 	pop %rbx 	# Retrieve frame pointer
 	addq $8, %rsp 	# remove args
-	movq -8(%rbx), %rax 	# variable a
+	movq -8(%rbx), %rax 	# local variable a
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax
