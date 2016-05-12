@@ -36,7 +36,6 @@ main:
 	movq %rax, -8(%rbx) 	# assign to variable a
 	movq $5, %rax 	# evaluate number
 	movq -16(%rbx), %rax 	# local variable b
-	movq 0(%rax), %rax 	# pointer dereference
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax

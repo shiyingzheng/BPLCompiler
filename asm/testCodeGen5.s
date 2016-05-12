@@ -97,7 +97,6 @@ main:
 	movq $.WritelnString, %rdi
 	call printf
 	movq -8(%rbx), %rax 	# local variable n
-	movq 0(%rax), %rax 	# pointer dereference
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax

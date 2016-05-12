@@ -264,15 +264,13 @@ public class BPLCodeGen {
                 int offset;
                 if (id.getDepth() == 1) {
                     offset = 16 + 8 * id.getPosition();
-                    this.output("movq " + offset + "(%rbx), %rdx");
-                    this.output("movq %rax, 0(%rdx)",
-                        "assign to pointer variable " + name);
                 }
                 else {
                     offset = -8 - 8 * id.getPosition();
-                    this.output("movq %rax, " + offset + "(%rbx)",
-                        "assign to pointer variable " + name);
                 }
+                this.output("movq " + offset + "(%rbx), %rdx");
+                this.output("movq %rax, 0(%rdx)",
+                    "assign to pointer variable " + name);
             }
             else {
                 this.output("movq $"+ name + ", %rdx",
