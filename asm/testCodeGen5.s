@@ -14,7 +14,8 @@ main:
 	movq %rsp, %rbx
 	subq $56, %rsp 	# Allocate space for local variables
 	movq $5, %rax 	# evaluate number
-	movq %rax, -8(%rbx) 	# assign to pointer variable n
+	movq -8(%rbx), %rdx
+	movq %rax, 0(%rdx) 	# assign to pointer variable n
 	movq $0, %rax 	# evaluate number
 	movq %rax, -56(%rbx) 	# assign to variable potato
 	movq $55, %rax 	# evaluate number
@@ -97,6 +98,7 @@ main:
 	movq $.WritelnString, %rdi
 	call printf
 	movq -8(%rbx), %rax 	# local variable n
+	movq 0(%rax), %rax 	# pointer dereference
 	movq %rax, %rsi 	# write int
 	movq $.WriteIntString, %rdi
 	movl $0, %eax

@@ -1,0 +1,6 @@
+void main(void) {
+    int x[5];
+    x[1] = 12;
+    write(x[1]);
+    writeln();
+}
