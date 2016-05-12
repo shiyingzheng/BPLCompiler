@@ -1,0 +1,28 @@
+int potatoes[5];
+int k;
+int *j;
+
+void main(void) {
+	int *n;
+	int p[5];
+	int potato;
+
+	*n = 5;
+
+	potato = 0;
+	k = 55;
+
+	while(potato < 5) {
+		p[potato] = potato;
+		write(p[potato]);
+		writeln();
+		potatoes[potato] = potato;
+		potato = potato + 1;
+	}
+
+	write(p[3]);
+	writeln();
+
+	write(*n);
+	writeln();
+}
