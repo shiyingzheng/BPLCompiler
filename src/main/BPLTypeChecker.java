@@ -255,21 +255,13 @@ public class BPLTypeChecker {
                 ref = true;
             }
             if (e.numChildren() > 1) {
-                if (e.getNodeType().equals("FACTOR")
-                        && !e.getChild(0).isNodeType("FUNCTION_CALL")){
-                    e = e.getChild(0);
-                }
-                else {
-                    ref = false;
-                }
+                ref = false;
             }
-            else {
-                if (e.isNodeType("<string>") || e.isNodeType("<num>")) {
-                    throw new BPLTypeCheckerException(ptr.getLineNumber(),
-                        "right hand side of pointer address assignment not valid");
-                }
-                e = e.getChild(0);
+            if (e.isNodeType("<string>") || e.isNodeType("<num>")) {
+                throw new BPLTypeCheckerException(ptr.getLineNumber(),
+                    "right hand side of pointer address assignment not valid");
             }
+            e = e.getChild(0);
         }
         if (ref == false) {
             if (!e.getDeclaration().getNodeType().contains("POINTER")){
