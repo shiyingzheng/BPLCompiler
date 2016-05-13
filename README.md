@@ -3,6 +3,18 @@ To compile, run
         make
         make compiletest
 
+To run the Code Generator on a test file named "testfile", you may use the
+runCodeGen.sh script:
+
+        ./runCodeGen.sh testfile
+
+Or, to compile everything from testfile/codeGenTests into x86 assembly, run
+
+        ./assemble
+
+And then you can find the executables in /bin.
+
+
 To run the Type Checker on a test file named "testfile" that is placed in the root
 directory of the project, you may use the runTypeChecker.sh script:
 

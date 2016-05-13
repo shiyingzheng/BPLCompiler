@@ -3,6 +3,8 @@ int x[10];
 
 void switch (int A[], int i, int j) {
     int temp;
+    write(A[i]);
+    write(A[j]);
     if (i != j) {
         temp = A[i];
         A[i] = A[j];

@@ -12,6 +12,30 @@ switch:
 	movq %rsp, %rbx
 	subq $8, %rsp 	# Allocate space for local variables
 	movq 24(%rbx), %rax 	# param i
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rdx, %rax
+	movq 0(%rax), %rax
+	movq %rax, %rsi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq 32(%rbx), %rax 	# param j
+	push %rax 	# get array A element
+	movq 16(%rbx), %rax
+	movq %rax, %rdx
+	pop %rax
+	imul $8, %eax
+	addq %rdx, %rax
+	movq 0(%rax), %rax
+	movq %rax, %rsi 	# write int
+	movq $.WriteIntString, %rdi
+	movl $0, %eax
+	call printf
+	movq 24(%rbx), %rax 	# param i
 	push %rax 	# comparison
 	movq 32(%rbx), %rax 	# param j
 	cmpl %eax, 0(%rsp)
